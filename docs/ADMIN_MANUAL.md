@@ -1,143 +1,225 @@
-# ZollPilot Admin Manual
+# ZollPilot Administrator-Handbuch
 
-**Status:** TBD - Will be populated as features are implemented
+**Status:** In Entwicklung - Wird mit der Implementierung neuer Funktionen erweitert
 
-**Audience:** System administrators and operations team
+**Zielgruppe:** Systemadministratoren und Operations-Team
 
-## Table of Contents
+## Inhaltsverzeichnis
 
-- [Introduction](#introduction)
-- [Admin Access](#admin-access)
-- [Pricing Configuration](#pricing-configuration)
+- [Einführung](#einführung)
+- [Aktueller Status (Phase 0.2)](#aktueller-status-phase-02)
+- [Admin-Zugang](#admin-zugang)
+- [Preiskonfiguration](#preiskonfiguration)
 - [Logging & Monitoring](#logging--monitoring)
-- [Audit Logs](#audit-logs)
-- [Support Tools](#support-tools)
-- [User Management](#user-management)
-- [Troubleshooting](#troubleshooting)
+- [Audit-Protokolle](#audit-protokolle)
+- [Support-Tools](#support-tools)
+- [Benutzerverwaltung](#benutzerverwaltung)
+- [Fehlerbehebung](#fehlerbehebung)
 
-## Introduction
+## Einführung
 
-The ZollPilot admin backend provides tools for:
-- Pricing configuration
-- System monitoring and logging
-- User support
-- Audit trail review
+Das ZollPilot Admin-Backend bietet Werkzeuge für:
+- Preiskonfiguration
+- System-Monitoring und Logging
+- Benutzersupport
+- Überprüfung von Audit-Trails
 
-**CRITICAL:** All admin actions generate immutable audit events.
+**KRITISCH:** Alle Admin-Aktionen erzeugen unveränderliche Audit-Events.
 
-## Admin Access
+## Aktueller Status (Phase 0.2)
 
-### Authentication
+### Verfügbare Admin-Seite
 
-TBD - Admin authentication mechanism
+Der Admin-Bereich ist über `/admin` erreichbar und zeigt derzeit eine Platzhalterseite mit folgenden Informationen:
 
-### Role-Based Access Control (RBAC)
+- Übersicht über geplante Admin-Funktionen
+- Link zur Startseite
+- Status: "Funktionen folgen in Phase 2"
 
-TBD - Admin roles and permissions
+**Zugriff:**
+- URL: `http://localhost:3000/admin`
+- Keine Authentifizierung erforderlich (wird in Phase 2 hinzugefügt)
 
+### Geplante Funktionen (Phase 2+)
+
+Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
+
+1. **Preiskonfiguration** - Verwaltung von Preisstufen und Tarifmodellen
+2. **System-Logging** - Zugriff auf Anwendungs- und Fehlerprotokolle
+3. **Audit-Trail-Viewer** - Übersicht aller Admin-Aktionen
+4. **Support-Tools** - Werkzeuge zur Benutzerverwaltung und -unterstützung
+5. **Benutzerverwaltung** - Rollen, Berechtigungen und Konten verwalten
+
+## Admin-Zugang
+
+### Authentifizierung
+
+**Aktueller Status (Phase 0.2):** Noch nicht implementiert
+
+**Geplant für Phase 2:**
+- Sichere Admin-Authentifizierung
+- Multi-Faktor-Authentifizierung (MFA)
+- Session-Management mit automatischem Timeout
+
+### Rollenbasierte Zugriffskontrolle (RBAC)
+
+**Aktueller Status:** Noch nicht implementiert
+
+**Geplante Rollen:**
 ```
-Roles (planned):
-- Super Admin    - Full system access
-- Support Admin  - User support, read-only logs
-- Config Admin   - Pricing and configuration
-- Viewer         - Read-only access
+- Super Admin    - Vollständiger Systemzugriff
+- Support Admin  - Benutzersupport, Nur-Lese-Zugriff auf Logs
+- Config Admin   - Preis- und Konfigurationsverwaltung
+- Viewer         - Nur-Lese-Zugriff
 ```
 
-## Pricing Configuration
+## Preiskonfiguration
 
-### Managing Pricing Tiers
+### Verwaltung von Preisstufen
 
-TBD
+**Status:** Noch nicht implementiert (Phase 2+)
 
-### Price Updates
+### Preisaktualisierungen
 
-TBD
+**Status:** Noch nicht implementiert
 
-**Important:** All pricing changes are audited and versioned.
+**Wichtig:** Alle Preisänderungen werden auditiert und versioniert.
+
+**Geplante Funktionen:**
+- Versionierung von Preisänderungen
+- Historische Preisübersicht
+- Automatische Audit-Trail-Erstellung bei jeder Änderung
+- Gültigkeitszeiträume für Preismodelle
 
 ## Logging & Monitoring
 
-### System Logs
+### System-Logs
 
-TBD - Access to application logs
+**Status:** Noch nicht implementiert (Phase 0.3+)
 
-### Performance Monitoring
+**Geplante Funktionen:**
+- Zugriff auf Anwendungsprotokolle
+- Filterung nach Log-Level (ERROR, WARN, INFO, DEBUG)
+- Volltextsuche in Logs
+- Export-Funktion für Logs
 
-TBD - Metrics and dashboards
+### Performance-Monitoring
 
-### Error Tracking
+**Status:** Noch nicht implementiert
 
-TBD - Error monitoring and alerting
+**Geplante Metriken:**
+- Response-Zeiten
+- Fehlerquoten
+- Datenbankabfrage-Performance
+- Ressourcenauslastung
 
-## Audit Logs
+### Fehler-Tracking
 
-### Viewing Audit Trail
+**Status:** Noch nicht implementiert
 
-TBD
+**Geplante Funktionen:**
+- Automatische Fehlererfassung
+- Stack-Trace-Anzeige
+- Benachrichtigungen bei kritischen Fehlern
 
-Every admin action generates an audit event with:
-- Timestamp
-- User ID and username
-- Action type
-- Resource affected
-- Old and new values (where applicable)
-- IP address
-- User agent
+## Audit-Protokolle
 
-### Audit Event Types
+### Anzeige des Audit-Trails
 
-TBD - List of audited actions
+**Status:** Noch nicht implementiert (Phase 0.5+)
 
-Example events:
-- `PRICING_UPDATE`
-- `USER_ROLE_CHANGE`
-- `CONFIG_CHANGE`
-- `SUPPORT_TICKET_VIEW`
+**Wichtig:** Jede Admin-Aktion erzeugt ein Audit-Event mit:
+- Zeitstempel (ISO 8601)
+- Benutzer-ID und Benutzername
+- Aktionstyp
+- Betroffene Ressource
+- Alte und neue Werte (falls zutreffend)
+- IP-Adresse
+- User-Agent
 
-### Audit Log Retention
+### Audit-Event-Typen
 
-TBD - Retention policy and archival
+**Geplante Event-Typen:**
+- `PRICING_UPDATE` - Preisänderung
+- `USER_ROLE_CHANGE` - Rollenänderung
+- `CONFIG_CHANGE` - Konfigurationsänderung
+- `SUPPORT_TICKET_VIEW` - Support-Ticket-Zugriff
+- `USER_DELETE` - Benutzer gelöscht
+- `USER_CREATE` - Benutzer erstellt
 
-## Support Tools
+### Aufbewahrung von Audit-Logs
 
-### User Lookup
+**Geplante Richtlinie:**
+- Mindestaufbewahrung: 2 Jahre
+- Unveränderlich (append-only)
+- Verschlüsselt im Ruhezustand
+- Regelmäßige Backups
 
-TBD
+## Support-Tools
 
-### Account Management
+### Benutzersuche
 
-TBD
+**Status:** Noch nicht implementiert (Phase 2+)
 
-### Support Ticket System
+**Geplante Funktionen:**
+- Suche nach E-Mail, ID oder Name
+- Kontodetails anzeigen
+- Aktivitätsverlauf
 
-TBD
+### Kontoverwaltung
 
-## User Management
+**Status:** Noch nicht implementiert
 
-### Creating Users
+**Geplante Funktionen:**
+- Passwort-Zurücksetzung
+- Konto aktivieren/deaktivieren
+- Berechtigungen ändern
 
-TBD
+### Support-Ticket-System
 
-### Managing Roles
+**Status:** Noch nicht implementiert
 
-TBD
+## Benutzerverwaltung
 
-### Deactivating Accounts
+### Benutzer erstellen
 
-TBD
+**Status:** Noch nicht implementiert (Phase 2+)
 
-**Important:** User management actions are fully audited.
+**Geplante Funktionen:**
+- Manuelle Benutzererstellung
+- Rollenauswahl
+- Automatische Benachrichtigung
 
-## Troubleshooting
+### Rollen verwalten
 
-### Common Issues
+**Status:** Noch nicht implementiert
 
-TBD
+**Wichtig:** Alle Benutzerverwaltungsaktionen werden vollständig auditiert.
 
-### Emergency Contacts
+### Konten deaktivieren
 
-TBD
+**Status:** Noch nicht implementiert
 
-### Runbook Links
+**Geplante Optionen:**
+- Temporäre Deaktivierung
+- Permanente Löschung (mit Audit-Trail)
 
-TBD - Link to operational runbooks
+## Fehlerbehebung
+
+### Häufige Probleme
+
+**Aktuell (Phase 0.2):**
+
+**Problem:** Admin-Seite zeigt nur Platzhalter
+**Lösung:** Dies ist das erwartete Verhalten in Phase 0.2. Admin-Funktionen werden in Phase 2 implementiert.
+
+**Problem:** Keine Authentifizierung erforderlich
+**Lösung:** Authentifizierung wird in Phase 2 hinzugefügt.
+
+### Notfallkontakte
+
+**Status:** Wird in späteren Phasen bereitgestellt
+
+### Runbook-Links
+
+**Status:** Operationelle Runbooks werden in Phase 0.8+ erstellt

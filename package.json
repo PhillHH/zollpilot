@@ -9,16 +9,16 @@
     "pnpm": ">=9.0.0"
   },
   "scripts": {
-    "dev": "echo 'Dev script - TBD in Phase 0.2'",
-    "build": "echo 'Build script - TBD in Phase 0.2'",
-    "start": "echo 'Start script - TBD in Phase 0.2'",
-    "test": "echo 'Test script - TBD'",
-    "test:unit": "echo 'Unit test script - TBD'",
+    "dev": "pnpm --filter @zollpilot/web dev",
+    "build": "pnpm --filter @zollpilot/web build",
+    "start": "pnpm --filter @zollpilot/web start",
+    "test": "pnpm --filter @zollpilot/web test",
+    "test:unit": "pnpm --filter @zollpilot/web test",
     "test:integration": "echo 'Integration test script - TBD'",
     "test:e2e": "echo 'E2E test script - TBD'",
-    "lint": "echo 'Lint script - TBD'",
+    "lint": "pnpm --filter @zollpilot/web lint",
     "format": "echo 'Format script - TBD'",
-    "typecheck": "echo 'Typecheck script - TBD'",
+    "typecheck": "pnpm --filter @zollpilot/web typecheck",
     "docs:check": "echo 'Doc drift check - TBD in Phase 0.10'"
   },
   "keywords": [

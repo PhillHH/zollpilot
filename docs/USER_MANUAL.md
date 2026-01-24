@@ -1,73 +1,130 @@
-# ZollPilot User Manual
+# ZollPilot Benutzerhandbuch
 
-**Status:** TBD - Will be populated as features are implemented
+**Status:** In Entwicklung - Wird mit der Implementierung neuer Funktionen erweitert
 
-**Audience:** End users of the ZollPilot public portal
+**Zielgruppe:** Endnutzer des öffentlichen ZollPilot-Portals
 
-## Table of Contents
+## Inhaltsverzeichnis
 
-- [Introduction](#introduction)
-- [Getting Started](#getting-started)
-- [Features](#features)
-- [FAQ](#faq)
+- [Einführung](#einführung)
+- [Erste Schritte](#erste-schritte)
+- [Verfügbare Seiten](#verfügbare-seiten)
+- [Funktionen](#funktionen)
+- [Häufig gestellte Fragen (FAQ)](#häufig-gestellte-fragen-faq)
 - [Support](#support)
 
-## Introduction
+## Einführung
 
-ZollPilot helps you manage and navigate customs data efficiently.
+ZollPilot hilft Ihnen, Zolldaten strukturiert zu erfassen und zu verwalten.
 
-**Current Status:** Application is under active development.
+**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.2).
 
-## Getting Started
+## Erste Schritte
 
-### Account Creation
+### Zugriff auf die Anwendung
 
-TBD
+Die ZollPilot-Webanwendung ist über Ihren Browser erreichbar. Öffnen Sie einfach die bereitgestellte URL in einem modernen Browser.
 
-### First Login
+**Unterstützte Browser:**
+- Google Chrome (empfohlen)
+- Mozilla Firefox
+- Safari
+- Microsoft Edge
 
-TBD
+### Navigation
 
-### Dashboard Overview
+Die Hauptnavigation befindet sich am oberen Rand jeder Seite und ermöglicht Ihnen den schnellen Zugriff auf:
+- **Home:** Startseite mit Übersicht
+- **Admin:** Administrationsbereich (nur für autorisierte Benutzer)
 
-TBD
+## Verfügbare Seiten
 
-## Features
+### Startseite (/)
 
-### Feature 1: [TBD]
+Die Startseite bietet einen Überblick über ZollPilot und seine Funktionen.
 
-Description, screenshots, and step-by-step guide.
+**Was Sie hier finden:**
+- Willkommensnachricht und Plattformübersicht
+- Links zu wichtigen Bereichen
+- Schnellzugriff auf häufig verwendete Funktionen (wird in zukünftigen Phasen erweitert)
 
-### Feature 2: [TBD]
+### Öffentliches Portal
 
-Description, screenshots, and step-by-step guide.
+Das öffentliche Portal ermöglicht den Zugriff auf Zolldaten und -verfahren ohne Anmeldung.
 
-## FAQ
+**Geplante Funktionen (kommende Phasen):**
+- Suche nach Zollverfahren
+- Durchsuchen von Zolldaten
+- SEO-optimierte Inhalte für bessere Auffindbarkeit
+- Filterung und Kategorisierung
 
-### General Questions
+### Health Check (/api/health)
 
-**Q: How do I...?**
-A: TBD
+Ein technischer Endpunkt zur Überprüfung des Systemstatus. Dieser wird hauptsächlich für Monitoring-Zwecke verwendet.
 
-**Q: What if...?**
-A: TBD
+## Funktionen
 
-### Technical Questions
+### Aktuelle Funktionen (Phase 0.2)
 
-**Q: What browsers are supported?**
-A: TBD - Modern browsers (Chrome, Firefox, Safari, Edge)
+**Öffentliches Portal:**
+- Zugriff auf die Startseite mit Plattformübersicht
+- Navigation zwischen öffentlichen und Admin-Bereichen
+- Health-Check-Endpunkt für Systemüberwachung
 
-**Q: Is my data secure?**
-A: Yes. See SECURITY.md for details.
+### Geplante Funktionen (zukünftige Phasen)
+
+Die folgenden Funktionen werden in kommenden Entwicklungsphasen hinzugefügt:
+
+**Datensuche und -navigation:**
+- Volltextsuche in Zolldaten
+- Erweiterte Filteroptionen
+- Kategoriebasierte Navigation
+- Detailansichten für Zollverfahren
+
+**Benutzerverwaltung:**
+- Kontoerstellung und -verwaltung
+- Personalisiertes Dashboard
+- Gespeicherte Suchen und Favoriten
+
+## Häufig gestellte Fragen (FAQ)
+
+### Allgemeine Fragen
+
+**F: Was ist ZollPilot?**
+A: ZollPilot ist eine Plattform zur strukturierten Erfassung und Verwaltung von Zolldaten. Sie bietet ein öffentliches Portal für den Zugriff auf Zollinformationen sowie einen Administrationsbereich für die Systemverwaltung.
+
+**F: Benötige ich ein Konto, um ZollPilot zu nutzen?**
+A: Für den Zugriff auf das öffentliche Portal ist derzeit kein Konto erforderlich. Die Benutzerverwaltung wird in einer späteren Phase implementiert.
+
+**F: In welcher Phase befindet sich die Entwicklung?**
+A: Derzeit in Phase 0.2 - Die grundlegende Anwendungsstruktur mit Next.js ist implementiert. Weitere Funktionen folgen in zukünftigen Phasen.
+
+### Technische Fragen
+
+**F: Welche Browser werden unterstützt?**
+A: Alle modernen Browser werden unterstützt, einschließlich Google Chrome, Mozilla Firefox, Safari und Microsoft Edge. Wir empfehlen die Verwendung der neuesten Versionen für die beste Erfahrung.
+
+**F: Sind meine Daten sicher?**
+A: Ja. Detaillierte Informationen zu unseren Sicherheitsmaßnahmen finden Sie in SECURITY.md.
+
+**F: Ist die Plattform für mobile Geräte optimiert?**
+A: Die mobile Optimierung wird in zukünftigen Phasen implementiert.
 
 ## Support
 
-### Getting Help
+### Hilfe erhalten
 
-- **Email:** [TBD]
-- **Documentation:** See this manual and SETUP.md
-- **Issues:** Report bugs via [TBD]
+Wenn Sie Unterstützung benötigen:
 
-### Response Times
+- **Dokumentation:** Siehe dieses Handbuch und SETUP.md für technische Details
+- **Fehlerberichte:** Issues können über das GitHub-Repository gemeldet werden
+- **E-Mail-Support:** [Wird in späteren Phasen bereitgestellt]
 
-TBD based on support tier
+### Bekannte Einschränkungen (Phase 0.2)
+
+- Keine Benutzerauthentifizierung
+- Keine Datenbankintegration
+- Begrenzte Funktionalität im Admin-Bereich
+- Keine Suchfunktion
+
+Diese Einschränkungen werden in den kommenden Entwicklungsphasen behoben.

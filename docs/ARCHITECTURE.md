@@ -39,6 +39,37 @@ TBD
 - **Testing:** Vitest (unit/integration), Playwright (E2E)
 - **CI/CD:** GitHub Actions
 
+### Frontend Stack (Phase 0.2+)
+- **Framework:** Next.js 14+ with App Router
+- **Language:** TypeScript (strict mode)
+- **Rendering:** Server-Side Rendering (SSR) by default
+- **Testing:** Vitest + React Testing Library
+- **Routing:** File-based routing (Next.js App Router)
+
+#### Next.js Configuration
+- **React Strict Mode:** Enabled
+- **X-Powered-By Header:** Disabled for security
+- **Path Aliases:** `@/*` maps to `src/*`
+
+#### Directory Structure (apps/web)
+```
+apps/web/
+├── src/
+│   ├── app/                  - App Router pages & layouts
+│   │   ├── layout.tsx        - Root layout with navigation
+│   │   ├── page.tsx          - Home page (/)
+│   │   ├── admin/            - Admin area
+│   │   │   └── page.tsx      - Admin page (/admin)
+│   │   └── api/              - API routes
+│   │       └── health/       - Health check endpoint
+│   │           └── route.ts
+│   └── components/           - Shared components (TBD)
+├── public/                   - Static assets
+├── vitest.config.ts          - Vitest configuration
+├── tsconfig.json             - TypeScript config (strict)
+└── next.config.js            - Next.js configuration
+```
+
 ## Application Structure
 
 ```
