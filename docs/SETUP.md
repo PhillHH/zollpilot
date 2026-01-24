@@ -319,9 +319,103 @@ Tests are located next to the files they test:
 
 ### Test Coverage
 
-Minimum coverage requirements (enforced in CI later):
-- Overall: 80%
-- Critical paths: 100%
+Coverage thresholds are ENFORCED (Phase 0.4+):
+- Lines: ≥80%
+- Functions: ≥80%
+- Branches: ≥80%
+- Statements: ≥80%
+
+Run tests with coverage:
+```bash
+pnpm test:coverage
+```
+
+**Important:** The `test:coverage` command will FAIL if any threshold is not met.
+
+## Code Quality
+
+ZollPilot enforces strict quality gates to ensure code reliability and maintainability.
+
+### Quality Gate Commands
+
+Run these commands before committing:
+
+```bash
+# 1. Linting (ESLint)
+pnpm lint
+
+# 2. Type checking (TypeScript strict mode)
+pnpm typecheck
+
+# 3. Testing with coverage (≥80% required)
+pnpm test:coverage
+
+# 4. Code formatting (Prettier)
+pnpm format
+
+# Run all gates at once
+pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm format
+```
+
+### Linting
+
+Check and fix code style issues:
+
+```bash
+# Check for linting errors
+pnpm lint
+
+# Auto-fix linting errors (when possible)
+pnpm --filter @zollpilot/web lint --fix
+```
+
+### Type Checking
+
+Validate TypeScript types:
+
+```bash
+# Run type checking
+pnpm typecheck
+```
+
+All code must pass TypeScript strict mode checks.
+
+### Code Formatting
+
+Ensure consistent code formatting:
+
+```bash
+# Check formatting (CI-safe, does not modify files)
+pnpm format
+
+# Apply formatting (modifies files)
+pnpm format:write
+```
+
+**Configuration:** See `.prettierrc` for formatting rules.
+
+### Coverage Enforcement
+
+Test coverage is enforced at ≥80% for all metrics:
+
+```bash
+# Run tests with coverage and threshold enforcement
+pnpm test:coverage
+```
+
+If coverage drops below 80%, the command will fail. This is intentional and ensures code quality.
+
+**View Coverage Report:**
+After running `pnpm test:coverage`, open `apps/web/coverage/index.html` in a browser to see detailed coverage report.
+
+### Pre-Commit Checklist
+
+Before committing code:
+- ✅ All tests pass (`pnpm test`)
+- ✅ Coverage ≥80% (`pnpm test:coverage`)
+- ✅ No linting errors (`pnpm lint`)
+- ✅ No type errors (`pnpm typecheck`)
+- ✅ Code is formatted (`pnpm format`)
 
 ## Troubleshooting
 

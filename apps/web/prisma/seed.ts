@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -29,7 +29,7 @@ async function main() {
     create: {
       tenantId: tenant.id,
       email: 'admin@local.test',
-      role: UserRole.ADMIN,
+      role: 'ADMIN' as const,
     },
   })
 

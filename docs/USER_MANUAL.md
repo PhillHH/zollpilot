@@ -17,7 +17,9 @@
 
 ZollPilot hilft Ihnen, Zolldaten strukturiert zu erfassen und zu verwalten.
 
-**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.3). Datenpersistenz über PostgreSQL-Datenbank ist implementiert.
+**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.4). Datenpersistenz über PostgreSQL-Datenbank ist implementiert.
+
+**Qualitätssicherung:** Die Zuverlässigkeit der Plattform ist durch automatisierte Tests und strenge Qualitätskontrollen gewährleistet.
 
 ## Erste Schritte
 
