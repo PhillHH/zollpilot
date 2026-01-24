@@ -640,6 +640,66 @@ Before committing code:
 - ✅ No type errors (`pnpm typecheck`)
 - ✅ Code is formatted (`pnpm format`)
 
+## CI Parity (Phase 0.8+)
+
+The GitHub Actions CI pipeline runs the same quality gates on every pull request. Run these commands locally to ensure your PR will pass CI.
+
+### CI Jobs and Local Equivalents
+
+**Quality Gates Job:**
+```bash
+# Exactly what CI runs
+pnpm format        # Check formatting (no --write)
+pnpm lint          # ESLint
+pnpm typecheck     # TypeScript strict mode
+pnpm test:coverage # Unit tests with ≥80% coverage
+```
+
+**Integration Tests Job:**
+```bash
+# Prerequisites: PostgreSQL running
+pnpm db:up                   # Start PostgreSQL
+pnpm prisma:generate         # Generate Prisma client
+pnpm prisma:migrate:deploy   # Apply migrations (CI-safe)
+pnpm test:integration        # Run integration tests
+```
+
+**E2E Tests Job:**
+```bash
+# Prerequisites: Chromium installed
+npx playwright install chromium  # First time only
+pnpm test:e2e:ci                 # E2E in CI mode (build + start)
+```
+
+### Run All CI Checks Locally
+
+To ensure your PR will pass CI, run all checks in sequence:
+
+```bash
+# Quality gates
+pnpm format && pnpm lint && pnpm typecheck && pnpm test:coverage
+
+# Integration tests (requires PostgreSQL)
+pnpm db:up && pnpm test:integration
+
+# E2E tests (requires Chromium)
+pnpm test:e2e:ci
+```
+
+**Note:** Git hooks (Phase 0.7+) automatically run a subset of these checks on commit and push, but CI runs the full suite.
+
+### CI Status
+
+Check CI status on your PR:
+1. Open your pull request on GitHub
+2. Scroll to the bottom to see status checks
+3. All three jobs must pass: `quality`, `integration`, `e2e`
+
+**Failed checks:**
+- Click "Details" to view logs
+- Download artifacts (coverage reports, Playwright reports) if available
+- See [CONTRIBUTING.md CI Pipeline section](./CONTRIBUTING.md#ci-pipeline-phase-08) for debugging tips
+
 ## Troubleshooting
 
 TBD - Common issues and solutions

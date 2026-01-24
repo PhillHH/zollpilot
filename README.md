@@ -1,13 +1,15 @@
 # ZollPilot
 
+[![CI](https://github.com/PhillHH/zollpilot/workflows/CI/badge.svg)](https://github.com/PhillHH/zollpilot/actions/workflows/ci.yml)
+
 **A structured customs data management platform**
 
 ZollPilot helps organizations efficiently manage and navigate customs data with a modern, SEO-crawlable public portal and comprehensive admin backend.
 
 ## Project Status
 
-**Phase:** 0.1 - Repository initialization complete
-**Next:** Phase 0.2 - Next.js application setup
+**Phase:** 0.9.2 - Dependabot configuration and security scanning documentation
+**Next:** Phase 1 - Core features implementation
 
 ## Features (Planned)
 
@@ -125,7 +127,7 @@ See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for full guidelines.
 
 ### Security
 - No secrets in repository
-- Regular dependency audits
+- Automated dependency monitoring (Dependabot)
 - Input validation everywhere
 - OWASP compliance
 
@@ -175,6 +177,16 @@ We follow strict development practices:
 - Nothing undocumented
 - Code review required
 - CI gates enforced
+
+### Merge Requirements
+
+All pull requests must:
+- ✅ Pass all CI checks (quality, integration, e2e)
+- ✅ Have at least 1 approving review
+- ✅ Be up-to-date with base branch
+- ✅ Have all conversations resolved
+
+**Note:** When branch protection is configured (Phase 0.9.1+), these requirements are enforced automatically by GitHub. See [CONTRIBUTING.md](docs/CONTRIBUTING.md#branch-protection-setup-phase-091) for setup instructions.
 
 Read [CONTRIBUTING.md](docs/CONTRIBUTING.md) before submitting PRs.
 

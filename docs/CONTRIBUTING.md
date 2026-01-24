@@ -269,6 +269,337 @@ All PRs must pass:
 - ✅ Documentation drift check
 - ✅ Code review (min. 1 approval)
 
+## CI Pipeline (Phase 0.8+)
+
+The CI pipeline runs automatically on pull requests and pushes to main/feature branches. It enforces all quality gates and must pass before merging.
+
+### CI Jobs
+
+The pipeline consists of three parallel jobs:
+
+#### 1. Quality Gates Job
+
+**What it does:**
+- Checks code formatting with Prettier
+- Runs ESLint for code quality
+- Runs TypeScript type checking
+- Runs unit tests with coverage enforcement (≥80%)
+
+**Local equivalent:**
+```bash
+pnpm format        # Check formatting
+pnpm lint          # Run ESLint
+pnpm typecheck     # Type check
+pnpm test:coverage # Unit tests with coverage
+```
+
+**Common failures:**
+- **Format check fails:** Run `pnpm format:write` to auto-fix
+- **Lint fails:** Run `pnpm lint --fix` or fix manually
+- **Type errors:** Fix TypeScript errors in reported files
+- **Coverage below 80%:** Add tests to increase coverage
+
+#### 2. Integration Tests Job
+
+**What it does:**
+- Spins up PostgreSQL service container
+- Generates Prisma client
+- Runs database migrations
+- Executes integration tests with schema-per-run isolation
+
+**Local equivalent:**
+```bash
+pnpm db:up                   # Start PostgreSQL
+pnpm prisma:generate         # Generate Prisma client
+pnpm prisma:migrate:deploy   # Run migrations
+pnpm test:integration        # Run integration tests
+```
+
+**Common failures:**
+- **Migration fails:** Check migration files in `apps/web/prisma/migrations/`
+- **Connection errors:** Verify DATABASE_URL is set correctly
+- **Schema conflicts:** Ensure schema-per-run creates unique schemas
+- **Test failures:** Check test logs for specific failures
+
+#### 3. E2E Tests Job
+
+**What it does:**
+- Installs Playwright browsers (Chromium)
+- Runs E2E tests in CI mode (next build + next start)
+- Uploads test reports and traces on failure
+
+**Local equivalent:**
+```bash
+npx playwright install chromium  # Install browser (first time only)
+pnpm test:e2e:ci                 # Run E2E tests in CI mode
+```
+
+**Common failures:**
+- **Browser not found:** Playwright cache issue, will reinstall on retry
+- **Server timeout:** Build step taking too long, check Next.js build
+- **Test failures:** Check Playwright report artifact for screenshots/traces
+- **Selector errors:** UI changed, update selectors in E2E tests
+
+### Debugging CI Failures
+
+**View detailed logs:**
+1. Click on the failing job in GitHub Actions
+2. Expand the failed step to see full output
+3. Check uploaded artifacts for reports (coverage, Playwright)
+
+**Reproduce locally:**
+Run the exact commands from the failed job (see "Local equivalent" above).
+
+**Playwright failures:**
+1. Download the `playwright-report` artifact from the failed run
+2. Extract and open `index.html` to see interactive report
+3. View screenshots, traces, and video recordings of failures
+
+**Integration test failures:**
+1. Check if migrations are up to date: `pnpm prisma:migrate:deploy`
+2. Verify PostgreSQL is running: `pnpm db:up`
+3. Check DATABASE_URL matches expected format
+4. Run tests locally with same DATABASE_URL as CI
+
+### CI Status Checks
+
+All three jobs must pass before a PR can be merged:
+- ✅ Quality Gates
+- ✅ Integration Tests
+- ✅ E2E Tests
+
+**Note:** The CI pipeline runs automatically on pull requests, but it only becomes a **merge gate** when branch protection is configured in GitHub (see Branch Protection Setup below).
+
+## Branch Protection Setup (Phase 0.9.1)
+
+**IMPORTANT:** The CI pipeline (Phase 0.8+) runs on all pull requests, but it does **NOT automatically block merging** unless branch protection rules are configured in GitHub.
+
+### Why Branch Protection Matters
+
+Without branch protection:
+- ❌ PRs can be merged even if CI fails
+- ❌ PRs can be merged without code review
+- ❌ Direct commits to `main` are allowed
+- ❌ Force pushes can overwrite history
+
+With branch protection:
+- ✅ CI must pass before merging
+- ✅ Code review required
+- ✅ Direct commits to `main` blocked
+- ✅ Branch must be up-to-date with base
+- ✅ Force pushes prevented
+
+### Exact GitHub Configuration Steps
+
+**Prerequisites:**
+- Repository admin access
+- CI pipeline already configured (Phase 0.8+)
+
+**Steps:**
+
+1. **Navigate to Branch Protection Settings**
+   - Go to your repository on GitHub
+   - Click **Settings** (top right)
+   - Click **Branches** in the left sidebar
+   - Under "Branch protection rules", click **Add rule**
+
+2. **Configure Branch Name Pattern**
+   - In "Branch name pattern", enter: `main`
+   - This applies the rule to the main branch
+
+3. **Enable Pull Request Requirements**
+   - ✅ Check **Require a pull request before merging**
+   - Under this, configure:
+     - ✅ **Require approvals**: Set to `1` (minimum)
+     - ✅ **Dismiss stale pull request approvals when new commits are pushed**
+     - ⬜ **Require review from Code Owners** (optional, if CODEOWNERS file exists)
+     - ⬜ **Restrict who can dismiss pull request reviews** (optional)
+
+4. **Enable Status Check Requirements**
+   - ✅ Check **Require status checks to pass before merging**
+   - Under this, configure:
+     - ✅ **Require branches to be up to date before merging** (recommended)
+     - In the search box below "Status checks that are required", add:
+       - `quality` (enter and select)
+       - `integration` (enter and select)
+       - `e2e` (enter and select)
+   - **Note:** These status check names must match the job names in `.github/workflows/ci.yml`
+
+5. **Additional Recommended Settings**
+   - ✅ **Require conversation resolution before merging** (recommended)
+   - ✅ **Require signed commits** (optional, for enhanced security)
+   - ✅ **Require linear history** (optional, prevents merge commits)
+   - ✅ **Do not allow bypassing the above settings** (prevents admin bypass)
+   - ⬜ **Allow force pushes** (leave unchecked - prevents history rewriting)
+   - ⬜ **Allow deletions** (leave unchecked - prevents branch deletion)
+
+6. **Lock Down the Main Branch (Advanced)**
+   - ✅ **Restrict who can push to matching branches** (optional)
+     - Select specific users or teams allowed to push (usually none for `main`)
+   - This ensures ALL changes go through pull requests
+
+7. **Save Configuration**
+   - Click **Create** (or **Save changes** if editing existing rule)
+   - Branch protection is now active
+
+### Verification Checklist
+
+After configuring branch protection, verify it works:
+
+1. **Test CI Enforcement:**
+   ```bash
+   # Create a test branch with intentional failure
+   git checkout -b test/branch-protection
+
+   # Make a change that breaks linting (e.g., add extra spaces)
+   echo "const x  =  1" >> apps/web/src/test-file.ts
+
+   git add .
+   git commit -m "test: verify branch protection"
+   git push -u origin test/branch-protection
+   ```
+
+   - Create a PR from this branch to `main`
+   - Verify that GitHub shows **failing status checks**
+   - Verify that the **"Merge pull request"** button is disabled or shows warning
+   - Expected message: "Merging is blocked - Required status checks must pass"
+
+2. **Test PR Approval Requirement:**
+   - Create a PR with passing CI
+   - Without approval, try to merge
+   - Expected: "Merging is blocked - Requires 1 approving review"
+
+3. **Test Direct Push Protection:**
+   ```bash
+   git checkout main
+   git pull
+   echo "test" >> README.md
+   git commit -am "test: direct push"
+   git push
+   ```
+   - Expected error: `refusing to allow a personal access token to push to a protected branch`
+   - **Note:** This confirms direct pushes are blocked
+
+4. **Clean Up Test Branch:**
+   ```bash
+   git checkout main
+   git branch -D test/branch-protection
+   git push origin --delete test/branch-protection
+   ```
+
+### Current Protection Status
+
+**As of Phase 0.9.1:**
+- ✅ CI pipeline configured (quality, integration, e2e jobs)
+- ⏳ Branch protection rules (manual configuration required)
+
+**To enable enforcement:**
+Follow the exact steps above to configure branch protection in GitHub Settings.
+
+### Troubleshooting
+
+**Problem:** Status checks not appearing in the dropdown
+- **Cause:** The CI workflow hasn't run yet on a PR
+- **Solution:** Create a test PR first, wait for CI to run, then configure branch protection
+
+**Problem:** "Merge" button still enabled despite failing CI
+- **Cause:** Branch protection not configured or status check names don't match
+- **Solution:**
+  1. Verify rule is applied to `main` branch
+  2. Verify status check names match exactly: `quality`, `integration`, `e2e`
+  3. Check that "Require status checks to pass before merging" is checked
+
+**Problem:** Can't merge even with passing CI
+- **Cause:** Branch not up-to-date with base
+- **Solution:** Click "Update branch" button in PR or run `git pull origin main && git push`
+
+**Problem:** Admin can still bypass protections
+- **Cause:** "Do not allow bypassing the above settings" is unchecked
+- **Solution:** Enable this setting to enforce rules even for admins
+
+## Security Settings (Phase 0.9.2)
+
+**IMPORTANT:** Dependabot and security scanning features are configured in `.github/dependabot.yml`, but additional security features must be enabled manually in GitHub repository settings.
+
+### Automated Dependency Updates (Dependabot)
+
+**Already Configured (Phase 0.9.2):**
+- ✅ `.github/dependabot.yml` exists and scans:
+  - npm dependencies (pnpm workspace, weekly schedule)
+  - GitHub Actions (weekly schedule)
+- ✅ Updates grouped to reduce PR noise:
+  - `dev-dependencies` group (tooling: eslint, prettier, vitest, playwright, etc.)
+  - `runtime-dependencies` group (next, react, prisma)
+- ✅ Maximum 5 open dependency PRs at a time
+- ✅ Conventional commit format: `chore(deps):` or `chore(ci):`
+
+**Manual Configuration Required (GitHub UI):**
+
+Dependabot configuration file alone is not enough. Repository admins must enable Dependabot features in GitHub Settings:
+
+1. **Enable Dependabot Alerts**
+   - Go to **Settings → Code security and analysis**
+   - Under "Dependabot alerts":
+     - Click **Enable** (if not already enabled)
+   - This provides vulnerability alerts for dependencies
+
+2. **Enable Dependabot Security Updates**
+   - In the same section, under "Dependabot security updates":
+     - Click **Enable** (if not already enabled)
+   - This automatically creates PRs for security vulnerabilities
+   - **Note:** This is separate from version updates (configured in `dependabot.yml`)
+
+3. **Enable Dependabot Version Updates**
+   - Under "Dependabot version updates":
+     - Should show **"Dependabot is active"** if `dependabot.yml` is valid
+   - If not active, check the configuration file for syntax errors
+
+### Secret Scanning and Push Protection
+
+**Manual Configuration Required (GitHub UI):**
+
+1. **Enable Secret Scanning**
+   - Go to **Settings → Code security and analysis**
+   - Under "Secret scanning":
+     - Click **Enable** (if available - may require GitHub Advanced Security for private repos)
+   - Scans repository for accidentally committed secrets (API keys, tokens, etc.)
+
+2. **Enable Secret Scanning Push Protection** (Recommended)
+   - Under "Secret scanning push protection":
+     - Click **Enable** (if available)
+   - **Prevents** pushes containing detected secrets
+   - Developers will receive an error when attempting to push secrets
+   - Provides option to bypass (with justification) if it's a false positive
+
+### Security Settings Verification Checklist
+
+After configuring settings, verify:
+
+- [ ] **Dependabot alerts enabled** - Visit "Security" tab → "Dependabot alerts"
+- [ ] **Dependabot security updates enabled** - Check for auto-generated security PRs
+- [ ] **Dependabot version updates active** - Check for weekly update PRs (Mondays)
+- [ ] **Secret scanning enabled** - Visit "Security" tab → "Secret scanning"
+- [ ] **Push protection enabled** - Test by trying to commit a fake API key locally
+
+### Current Security Status
+
+**As of Phase 0.9.2:**
+- ✅ Dependabot configuration file created
+- ⏳ Dependabot alerts (manual GitHub UI configuration required)
+- ⏳ Dependabot security updates (manual GitHub UI configuration required)
+- ⏳ Secret scanning (manual GitHub UI configuration required)
+- ⏳ Secret scanning push protection (manual GitHub UI configuration required)
+
+**To enable full security scanning:**
+Follow the exact steps above to configure security features in GitHub Settings.
+
+### Dependency Update Review Policy
+
+See [docs/POLICIES.md](POLICIES.md#dependency-management-phase-092) for:
+- Dependency update review and merge timelines
+- Emergency security patch workflow
+- Breaking change handling
+
 ### Quality Gates (Phase 0.4+)
 
 **ENFORCED:** These checks must pass before merging. Run them locally before creating a PR.
