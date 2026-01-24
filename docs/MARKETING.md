@@ -26,6 +26,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD** - Wird basierend auf Produktfeatures definiert
 
 **Mögliche Alleinstellungsmerkmale:**
+
 - Intuitive Benutzeroberfläche für komplexe Zolldaten
 - SEO-optimierte öffentliche Datenzugänglichkeit
 - Umfassende Audit-Trail-Funktionen
@@ -38,6 +39,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD** - Wird basierend auf Produktstrategie definiert
 
 **Mögliche Zielgruppen:**
+
 - Import/Export-Unternehmen
 - Zolldienstleister und Speditionen
 - Compliance-Abteilungen
@@ -48,6 +50,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD**
 
 **Mögliche Gruppen:**
+
 - Steuerberater mit Zollspezialisierung
 - Einzelhändler mit internationalen Lieferketten
 - E-Commerce-Plattformen
@@ -63,6 +66,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD** - Wird basierend auf Produktfeatures definiert
 
 **Mögliche Nutzenargumente:**
+
 1. **Effizienzsteigerung** - Reduzierung manueller Prozesse
 2. **Transparenz** - Vollständige Nachvollziehbarkeit aller Vorgänge
 3. **Compliance** - Sichere Einhaltung aller Vorschriften
@@ -73,6 +77,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD**
 
 **Mögliche Vorteile:**
+
 - Einfacher Zugriff auf Zollinformationen
 - Keine komplexe Software-Installation nötig
 - Durchsuchbare, strukturierte Datendarstellung
@@ -82,6 +87,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD**
 
 **Mögliche Vorteile:**
+
 - Zentrale Verwaltung aller Systemeinstellungen
 - Umfassende Logging- und Monitoring-Tools
 - Flexible Preiskonfiguration
@@ -97,12 +103,14 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 ### Geplante Funktionen
 
 **Öffentliches Portal:**
+
 - Suchfunktion für Zolldaten
 - SEO-optimierte Inhalte
 - Responsive Design
 - Mehrsprachigkeit
 
 **Admin-Backend:**
+
 - Preiskonfiguration
 - Audit-Trail-Viewer
 - Support-Tools
@@ -113,6 +121,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD** - Wird nach Wettbewerbsanalyse definiert
 
 **Mögliche Differenzierungsmerkmale:**
+
 - Moderne Technologie (Next.js, TypeScript)
 - Open-Source-freundlich
 - Cloud-native Architektur
@@ -133,6 +142,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD** - Wird basierend auf Markenidentität definiert
 
 **Mögliche Tonalität:**
+
 - Professionell und vertrauenswürdig
 - Klar und verständlich
 - Technisch kompetent, aber zugänglich
@@ -150,6 +160,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD**
 
 **Mögliche Kanäle:**
+
 - Website und SEO
 - Content Marketing (Blog, Guides)
 - Social Media (LinkedIn, Twitter)
@@ -161,6 +172,7 @@ ZollPilot ist eine moderne Plattform zur strukturierten Erfassung und Verwaltung
 **TBD**
 
 **Mögliche KPIs:**
+
 - Besucherzahlen (Public Portal)
 - Conversion-Raten
 - Nutzungsmetriken

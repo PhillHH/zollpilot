@@ -78,18 +78,42 @@ chore: update dependencies
    pnpm prisma:generate # Updates client
    pnpm prisma:seed     # Updates seed data
    ```
-7. Create PR with descriptive title and description
-7. Address review feedback
-8. Merge after approval and passing CI
+7. **Quality Gates:**
+   Ensure all local checks pass:
+   ```bash
+   pnpm lint           # Check for linting errors
+   pnpm typecheck      # Check for type errors
+   pnpm format         # Check formatting
+   pnpm test:coverage  # Run tests with coverage (>80%)
+   ```
+8. Create PR with descriptive title and description
+9. Address review feedback
+10. Merge after approval and passing CI
 
 ### PR Requirements (Gates)
 
 All PRs must pass:
+
 - ✅ All tests (unit, integration, E2E)
 - ✅ Type checking
-- ✅ Linting
+- ✅ Linting & Formatting
 - ✅ Documentation drift check
 - ✅ Code review (min. 1 approval)
+
+## Quality Gates
+
+We enforce high standards using automated tools.
+
+### Commands
+
+| Command              | Purpose                                   |
+| -------------------- | ----------------------------------------- |
+| `pnpm lint`          | Runs ESLint to catch code errors          |
+| `pnpm typecheck`     | Runs TypeScript compiler (strict mode)    |
+| `pnpm format`        | Checks code formatting (Prettier)         |
+| `pnpm format:write`  | Fixes code formatting (Prettier)          |
+| `pnpm test`          | Runs unit tests                           |
+| `pnpm test:coverage` | Runs unit tests and enforces 80% coverage |
 
 ## Code Standards
 
@@ -165,19 +189,24 @@ describe('Feature', () => {
 Significant technical decisions must be documented in `docs/adr/`.
 
 Format:
+
 ```markdown
 # ADR-001: Decision Title
 
 ## Status
+
 Accepted / Rejected / Superseded
 
 ## Context
+
 Background and problem
 
 ## Decision
+
 What we decided
 
 ## Consequences
+
 Impact and tradeoffs
 ```
 
@@ -186,6 +215,7 @@ Impact and tradeoffs
 **CRITICAL:** Every admin action must generate an audit event.
 
 Requirements:
+
 - Immutable audit logs
 - Include: timestamp, user, action, resource, old/new values
 - No PII in logs without encryption

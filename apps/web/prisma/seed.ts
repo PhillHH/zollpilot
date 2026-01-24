@@ -7,14 +7,14 @@ async function main() {
   const userEmail = 'admin@local.test'
 
   let tenant = await prisma.tenant.findFirst({
-    where: { name: tenantName }
+    where: { name: tenantName },
   })
 
   if (!tenant) {
     tenant = await prisma.tenant.create({
       data: {
-        name: tenantName
-      }
+        name: tenantName,
+      },
     })
     console.log(`Created tenant: ${tenant.name}`)
   } else {
@@ -25,9 +25,9 @@ async function main() {
     where: {
       tenantId_email: {
         tenantId: tenant.id,
-        email: userEmail
-      }
-    }
+        email: userEmail,
+      },
+    },
   })
 
   if (!user) {
@@ -35,8 +35,8 @@ async function main() {
       data: {
         tenantId: tenant.id,
         email: userEmail,
-        role: UserRole.ADMIN
-      }
+        role: UserRole.ADMIN,
+      },
     })
     console.log(`Created user: ${userEmail}`)
   } else {

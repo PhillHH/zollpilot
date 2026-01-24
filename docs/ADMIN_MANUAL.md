@@ -19,6 +19,7 @@
 ## Einführung
 
 Das ZollPilot Admin-Backend bietet Werkzeuge für:
+
 - Preiskonfiguration
 - System-Monitoring und Logging
 - Benutzersupport
@@ -26,9 +27,9 @@ Das ZollPilot Admin-Backend bietet Werkzeuge für:
 
 **KRITISCH:** Alle Admin-Aktionen erzeugen unveränderliche Audit-Events.
 
-## Aktueller Status (Phase 0.3)
+## Aktueller Status (Phase 0.4)
 
-*Hinweis: Die Datenbank-Infrastruktur für die Speicherung von Konfigurationen und Logs wird derzeit vorbereitet.*
+_Hinweis: Die Datenbank-Infrastruktur für die Speicherung von Konfigurationen und Logs wird derzeit vorbereitet. Technische Qualitätssicherung ist durch automatisierte Tests abgesichert._
 
 ### Verfügbare Admin-Seite
 
@@ -39,6 +40,7 @@ Der Admin-Bereich ist über `/admin` erreichbar und zeigt derzeit eine Platzhalt
 - Status: "Funktionen folgen in Phase 2"
 
 **Zugriff:**
+
 - URL: `http://localhost:3000/admin`
 - Keine Authentifizierung erforderlich (wird in Phase 2 hinzugefügt)
 
@@ -59,6 +61,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Aktueller Status (Phase 0.2):** Noch nicht implementiert
 
 **Geplant für Phase 2:**
+
 - Sichere Admin-Authentifizierung
 - Multi-Faktor-Authentifizierung (MFA)
 - Session-Management mit automatischem Timeout
@@ -68,6 +71,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Aktueller Status:** Noch nicht implementiert
 
 **Geplante Rollen:**
+
 ```
 - Super Admin    - Vollständiger Systemzugriff
 - Support Admin  - Benutzersupport, Nur-Lese-Zugriff auf Logs
@@ -88,6 +92,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Wichtig:** Alle Preisänderungen werden auditiert und versioniert.
 
 **Geplante Funktionen:**
+
 - Versionierung von Preisänderungen
 - Historische Preisübersicht
 - Automatische Audit-Trail-Erstellung bei jeder Änderung
@@ -100,6 +105,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Status:** Noch nicht implementiert (Phase 0.3+)
 
 **Geplante Funktionen:**
+
 - Zugriff auf Anwendungsprotokolle
 - Filterung nach Log-Level (ERROR, WARN, INFO, DEBUG)
 - Volltextsuche in Logs
@@ -110,6 +116,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Status:** Noch nicht implementiert
 
 **Geplante Metriken:**
+
 - Response-Zeiten
 - Fehlerquoten
 - Datenbankabfrage-Performance
@@ -120,6 +127,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Status:** Noch nicht implementiert
 
 **Geplante Funktionen:**
+
 - Automatische Fehlererfassung
 - Stack-Trace-Anzeige
 - Benachrichtigungen bei kritischen Fehlern
@@ -131,6 +139,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Status:** Noch nicht implementiert (Phase 0.5+)
 
 **Wichtig:** Jede Admin-Aktion erzeugt ein Audit-Event mit:
+
 - Zeitstempel (ISO 8601)
 - Benutzer-ID und Benutzername
 - Aktionstyp
@@ -142,6 +151,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 ### Audit-Event-Typen
 
 **Geplante Event-Typen:**
+
 - `PRICING_UPDATE` - Preisänderung
 - `USER_ROLE_CHANGE` - Rollenänderung
 - `CONFIG_CHANGE` - Konfigurationsänderung
@@ -152,6 +162,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 ### Aufbewahrung von Audit-Logs
 
 **Geplante Richtlinie:**
+
 - Mindestaufbewahrung: 2 Jahre
 - Unveränderlich (append-only)
 - Verschlüsselt im Ruhezustand
@@ -164,6 +175,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Status:** Noch nicht implementiert (Phase 2+)
 
 **Geplante Funktionen:**
+
 - Suche nach E-Mail, ID oder Name
 - Kontodetails anzeigen
 - Aktivitätsverlauf
@@ -173,6 +185,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Status:** Noch nicht implementiert
 
 **Geplante Funktionen:**
+
 - Passwort-Zurücksetzung
 - Konto aktivieren/deaktivieren
 - Berechtigungen ändern
@@ -188,6 +201,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Status:** Noch nicht implementiert (Phase 2+)
 
 **Geplante Funktionen:**
+
 - Manuelle Benutzererstellung
 - Rollenauswahl
 - Automatische Benachrichtigung
@@ -203,6 +217,7 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 **Status:** Noch nicht implementiert
 
 **Geplante Optionen:**
+
 - Temporäre Deaktivierung
 - Permanente Löschung (mit Audit-Trail)
 

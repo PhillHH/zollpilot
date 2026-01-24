@@ -16,15 +16,18 @@
 ## Prerequisites
 
 ### Required
+
 - **Node.js:** v20 LTS or higher
 - **pnpm:** v9.0.0 or higher
 - **Git:** Latest stable version
 
 ### Recommended
+
 - **nvm** or **fnm** for Node version management
 - **Docker** (required for local database)
 
 ### Editor
+
 - VS Code with recommended extensions (see `.vscode/extensions.json` - TBD)
 
 ## Quickstart
@@ -81,16 +84,19 @@ The defaults in `.env.example` are configured to work with the Docker-based Post
 The project uses Postgres (via Docker) and Prisma.
 
 1. **Start the database:**
+
    ```bash
    pnpm db:up
    ```
 
 2. **Run migrations:**
+
    ```bash
    pnpm prisma:migrate
    ```
 
 3. **Seed the database:**
+
    ```bash
    pnpm prisma:seed
    ```
@@ -114,6 +120,7 @@ pnpm dev
 The application will be available at `http://localhost:3000`.
 
 Available routes:
+
 - `/` - Home page (public portal)
 - `/admin` - Admin area (placeholder, features coming in Phase 2)
 - `/api/health` - Health check endpoint
@@ -138,12 +145,24 @@ Run TypeScript type checking without building:
 pnpm typecheck
 ```
 
-### Linting
+### Code Quality
 
-Check code for linting errors:
+We enforce strict quality gates.
 
 ```bash
+# Check everything (lint, typecheck, format, tests)
 pnpm lint
+pnpm typecheck
+pnpm format
+pnpm test:coverage
+```
+
+### Formatting
+
+Fix formatting issues automatically:
+
+```bash
+pnpm format:write
 ```
 
 ## Testing
@@ -172,12 +191,14 @@ pnpm test:e2e
 ### Writing Tests
 
 Following TDD (Test-Driven Development):
+
 1. Write failing test first
 2. Implement minimal code to pass
 3. Refactor if needed
 4. Commit
 
 Tests are located next to the files they test:
+
 - `src/app/page.tsx` → `src/app/page.test.tsx`
 - `src/app/admin/page.tsx` → `src/app/admin/page.test.tsx`
 - `src/app/api/health/route.ts` → `src/app/api/health/route.test.ts`
@@ -185,6 +206,7 @@ Tests are located next to the files they test:
 ### Test Coverage
 
 Minimum coverage requirements (enforced in CI later):
+
 - Overall: 80%
 - Critical paths: 100%
 

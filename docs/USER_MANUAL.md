@@ -17,8 +17,8 @@
 
 ZollPilot hilft Ihnen, Zolldaten strukturiert zu erfassen und zu verwalten.
 
-**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.3 - Datenbank-Grundlage).
-*Hinweis: Die technische Infrastruktur für die Datenspeicherung wird derzeit vorbereitet.*
+**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.4).
+_Hinweis: Die technische Infrastruktur für die Datenspeicherung wird derzeit vorbereitet. Technische Qualitätssicherung ist durch automatisierte Tests abgesichert._
 
 ## Erste Schritte
 
@@ -27,6 +27,7 @@ ZollPilot hilft Ihnen, Zolldaten strukturiert zu erfassen und zu verwalten.
 Die ZollPilot-Webanwendung ist über Ihren Browser erreichbar. Öffnen Sie einfach die bereitgestellte URL in einem modernen Browser.
 
 **Unterstützte Browser:**
+
 - Google Chrome (empfohlen)
 - Mozilla Firefox
 - Safari
@@ -35,6 +36,7 @@ Die ZollPilot-Webanwendung ist über Ihren Browser erreichbar. Öffnen Sie einfa
 ### Navigation
 
 Die Hauptnavigation befindet sich am oberen Rand jeder Seite und ermöglicht Ihnen den schnellen Zugriff auf:
+
 - **Home:** Startseite mit Übersicht
 - **Admin:** Administrationsbereich (nur für autorisierte Benutzer)
 
@@ -45,6 +47,7 @@ Die Hauptnavigation befindet sich am oberen Rand jeder Seite und ermöglicht Ihn
 Die Startseite bietet einen Überblick über ZollPilot und seine Funktionen.
 
 **Was Sie hier finden:**
+
 - Willkommensnachricht und Plattformübersicht
 - Links zu wichtigen Bereichen
 - Schnellzugriff auf häufig verwendete Funktionen (wird in zukünftigen Phasen erweitert)
@@ -54,6 +57,7 @@ Die Startseite bietet einen Überblick über ZollPilot und seine Funktionen.
 Das öffentliche Portal ermöglicht den Zugriff auf Zolldaten und -verfahren ohne Anmeldung.
 
 **Geplante Funktionen (kommende Phasen):**
+
 - Suche nach Zollverfahren
 - Durchsuchen von Zolldaten
 - SEO-optimierte Inhalte für bessere Auffindbarkeit
@@ -68,6 +72,7 @@ Ein technischer Endpunkt zur Überprüfung des Systemstatus. Dieser wird haupts�
 ### Aktuelle Funktionen (Phase 0.2)
 
 **Öffentliches Portal:**
+
 - Zugriff auf die Startseite mit Plattformübersicht
 - Navigation zwischen öffentlichen und Admin-Bereichen
 - Health-Check-Endpunkt für Systemüberwachung
@@ -77,12 +82,14 @@ Ein technischer Endpunkt zur Überprüfung des Systemstatus. Dieser wird haupts�
 Die folgenden Funktionen werden in kommenden Entwicklungsphasen hinzugefügt:
 
 **Datensuche und -navigation:**
+
 - Volltextsuche in Zolldaten
 - Erweiterte Filteroptionen
 - Kategoriebasierte Navigation
 - Detailansichten für Zollverfahren
 
 **Benutzerverwaltung:**
+
 - Kontoerstellung und -verwaltung
 - Personalisiertes Dashboard
 - Gespeicherte Suchen und Favoriten

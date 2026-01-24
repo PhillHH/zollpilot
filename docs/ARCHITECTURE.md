@@ -17,6 +17,7 @@
 ## Overview
 
 ZollPilot is a customs data management platform consisting of:
+
 - Public portal (SEO-crawlable)
 - Admin backend for pricing configuration, logging, and support
 
@@ -27,12 +28,14 @@ TBD
 ## Technology Stack
 
 ### Core Stack (defined in Phase 0.1)
+
 - **Package Manager:** pnpm 9.x
 - **Node.js:** v20 LTS
 - **Language:** TypeScript
 - **Monorepo:** pnpm workspaces
 
 ### Application Stack (planned)
+
 - **Frontend Framework:** Next.js (Phase 0.2)
 - **Database:** PostgreSQL
 - **ORM:** Prisma
@@ -40,6 +43,7 @@ TBD
 - **CI/CD:** GitHub Actions
 
 ### Frontend Stack (Phase 0.2+)
+
 - **Framework:** Next.js 14+ with App Router
 - **Language:** TypeScript (strict mode)
 - **Rendering:** Server-Side Rendering (SSR) by default
@@ -47,11 +51,13 @@ TBD
 - **Routing:** File-based routing (Next.js App Router)
 
 #### Next.js Configuration
+
 - **React Strict Mode:** Enabled
 - **X-Powered-By Header:** Disabled for security
 - **Path Aliases:** `@/*` maps to `src/*`
 
 #### Directory Structure (apps/web)
+
 ```
 apps/web/
 ├── src/
@@ -85,11 +91,13 @@ packages/
 The application uses **Postgres** with **Prisma ORM**.
 
 ### Core Models
+
 - **Tenant:** Represents a customer or organization.
 - **User:** A user belonging to a specific tenant.
 - **AuditEvent:** Immutable record of actions for compliance and security.
 
 ### Why Prisma?
+
 - Type-safe database queries.
 - Automated migrations.
 - Simple developer workflow.

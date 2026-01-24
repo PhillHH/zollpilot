@@ -12,11 +12,13 @@ ZollPilot helps organizations efficiently manage and navigate customs data with 
 ## Features (Planned)
 
 ### Public Portal
+
 - SEO-optimized public interface
 - Customs data navigation
 - User-friendly search and filtering
 
 ### Admin Backend
+
 - Pricing configuration management
 - Comprehensive logging and monitoring
 - Audit trail for all admin actions
@@ -25,12 +27,14 @@ ZollPilot helps organizations efficiently manage and navigate customs data with 
 ## Technology Stack
 
 ### Core (Phase 0.1)
+
 - **Monorepo:** pnpm workspaces
 - **Package Manager:** pnpm 9.15.2
 - **Runtime:** Node.js v20 LTS
 - **Language:** TypeScript (strict mode)
 
 ### Application Stack (Planned)
+
 - **Framework:** Next.js
 - **Database:** PostgreSQL
 - **ORM:** Prisma
@@ -97,6 +101,7 @@ See [docs/SETUP.md](docs/SETUP.md) for detailed setup instructions.
 ## Development Standards
 
 ### Test-Driven Development (TDD)
+
 All code must be written test-first. No exceptions.
 
 ```
@@ -104,9 +109,11 @@ Process: Test (red) → Code (green) → Refactor → Commit
 ```
 
 ### Nothing Undocumented
+
 Every feature must be documented. Documentation drift checks enforced in CI.
 
 ### Code Quality
+
 - TypeScript strict mode
 - 80% minimum test coverage
 - ESLint + Prettier enforced
@@ -117,13 +124,16 @@ See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for full guidelines.
 ## Key Policies
 
 ### Audit Logging
+
 **MANDATORY:** Every admin action generates an immutable audit event including:
+
 - Timestamp and user
 - Action and resource
 - Old and new values
 - IP and user agent
 
 ### Security
+
 - No secrets in repository
 - Regular dependency audits
 - Input validation everywhere
@@ -171,6 +181,7 @@ See [LICENSE](LICENSE) for details.
 ## Contributing
 
 We follow strict development practices:
+
 - TDD mandatory
 - Nothing undocumented
 - Code review required
