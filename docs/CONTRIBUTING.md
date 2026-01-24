@@ -58,6 +58,98 @@ test: add unit tests for user service
 chore: update dependencies
 ```
 
+**Enforced Locally:** Commit messages are validated automatically via git hooks (Phase 0.7+).
+
+### Local Hooks (Phase 0.7+)
+
+Git hooks are automatically installed on `pnpm install` and enforce quality standards before commits and pushes.
+
+#### What Runs When
+
+**On Commit (pre-commit):**
+- `lint-staged` runs on staged files only
+  - TypeScript files: ESLint --fix + Prettier --write
+  - Markdown, JSON, YAML: Prettier --write
+- **Fast** - only checks files you're committing
+
+**On Commit Message (commit-msg):**
+- `commitlint` validates conventional commit format
+- Rejects invalid commit messages
+- Ensures: `type(scope): subject` format
+
+**On Push (pre-push):**
+- Unit tests run (`pnpm test:unit`)
+- **Fast** - integration/E2E tests NOT included
+- Blocks push if tests fail
+
+#### Running Manually
+
+You can run the same checks manually:
+
+```bash
+# Lint staged files (same as pre-commit hook)
+pnpm lint-staged
+
+# Validate commit message (replace with your message)
+echo "feat: add new feature" | npx commitlint
+
+# Run unit tests (same as pre-push hook)
+pnpm test:unit
+
+# Run all quality gates
+pnpm lint && pnpm typecheck && pnpm test:unit
+```
+
+#### Bypassing Hooks (Emergency Only)
+
+**WARNING:** Only bypass hooks in emergencies. Your PR will fail in CI if quality gates don't pass.
+
+```bash
+# Skip pre-commit hook
+git commit --no-verify -m "emergency fix"
+
+# Skip pre-push hook
+git push --no-verify
+```
+
+**Best Practice:** Fix the issues instead of bypassing. Use `--no-verify` only for:
+- Emergency hotfixes that will be immediately fixed in a follow-up commit
+- Reverting broken commits
+- Work-in-progress commits in personal feature branches (discouraged)
+
+#### Troubleshooting Hooks
+
+**Hooks not running:**
+```bash
+# Reinstall hooks
+pnpm install
+# Or manually
+npx husky install
+```
+
+**Commit message rejected:**
+```bash
+# Bad - will be rejected
+git commit -m "fixed bug"
+git commit -m "WIP"
+
+# Good - will pass
+git commit -m "fix: resolve authentication bug"
+git commit -m "chore: update dependencies"
+```
+
+**lint-staged issues:**
+```bash
+# Run manually to see errors
+pnpm lint-staged
+
+# Fix formatting issues
+pnpm format:write
+
+# Fix linting issues
+pnpm lint --fix
+```
+
 ### Pull Request Process
 
 1. Create feature branch from `main`

@@ -1,0 +1,2 @@
+# Run unit tests before push (fast, no integration tests)
+pnpm test:unit
