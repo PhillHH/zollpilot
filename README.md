@@ -8,7 +8,7 @@ ZollPilot helps organizations efficiently manage and navigate customs data with 
 
 ## Project Status
 
-**Phase:** 0.9.2 - Dependabot configuration and security scanning documentation
+**Phase:** 0.9.3 - CodeQL security analysis and static application security testing
 **Next:** Phase 1 - Core features implementation
 
 ## Features (Planned)

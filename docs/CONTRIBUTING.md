@@ -600,6 +600,104 @@ See [docs/POLICIES.md](POLICIES.md#dependency-management-phase-092) for:
 - Emergency security patch workflow
 - Breaking change handling
 
+## Security Scanning (Phase 0.9.3)
+
+ZollPilot uses multiple layers of automated security scanning to detect vulnerabilities, security issues, and dependency risks. Understanding what each scanner does and where to view results is essential for maintaining security posture.
+
+### Security Scanning Layers
+
+We use three complementary scanning approaches:
+
+#### 1. CI Quality Gates (Phase 0.8+)
+**What:** Linting, type checking, and unit/integration/E2E tests
+**When:** Every pull request and push
+**Catches:**
+- Code quality issues
+- Type errors
+- Broken functionality
+- Test failures
+
+**View Results:** GitHub Actions → CI workflow run
+
+#### 2. CodeQL Security Analysis (Phase 0.9.3)
+**What:** Static Application Security Testing (SAST) for JavaScript/TypeScript
+**When:**
+- Every pull request to `main`
+- Every push to `main`
+- Weekly schedule (Mondays, 06:00 UTC)
+
+**Catches:**
+- SQL injection vulnerabilities
+- Cross-site scripting (XSS)
+- Path traversal issues
+- Command injection
+- Insecure randomness
+- Hardcoded credentials
+- And 100+ other security patterns
+
+**View Results:**
+1. Go to repository **Security** tab
+2. Click **Code scanning** in left sidebar
+3. View alerts filtered by:
+   - Branch
+   - Severity (Critical, High, Medium, Low)
+   - Status (Open, Dismissed, Fixed)
+4. Click individual alert for:
+   - Full description and remediation
+   - Code location and data flow
+   - CWE classification
+
+**Result Integration:**
+- CodeQL findings appear as checks on pull requests
+- High/Critical findings should block merging (configure in branch protection)
+- Results uploaded to GitHub Security dashboard automatically
+
+#### 3. Dependabot Security Alerts (Phase 0.9.2)
+**What:** Dependency vulnerability scanning (Software Composition Analysis)
+**When:** Continuous monitoring, PRs created weekly
+**Catches:**
+- Known CVEs in npm packages
+- Outdated dependencies with security fixes
+- Transitive dependency vulnerabilities
+
+**View Results:**
+1. Go to repository **Security** tab
+2. Click **Dependabot alerts** in left sidebar
+3. Or view auto-generated Dependabot PRs in **Pull requests** tab
+
+### How to Handle Security Findings
+
+**CodeQL Alerts:**
+See [docs/POLICIES.md](POLICIES.md#codeql-findings-phase-093) for severity handling and remediation workflow.
+
+**Dependabot Alerts:**
+See [docs/POLICIES.md](POLICIES.md#dependency-management-phase-092) for review SLAs and emergency patch process.
+
+### Local Security Scanning
+
+**Recommended Pre-Commit Checks:**
+```bash
+# Run all quality gates (includes basic security checks)
+pnpm lint        # ESLint catches some security anti-patterns
+pnpm typecheck   # Type safety prevents many runtime errors
+pnpm test        # Tests catch regressions and bugs
+
+# Audit dependencies for vulnerabilities
+pnpm audit       # Check for known CVEs in dependencies
+pnpm audit --fix # Automatically fix vulnerabilities when possible
+```
+
+**Note:** CodeQL requires GitHub infrastructure and cannot run fully locally, but you can use ESLint security plugins for similar local checks (future enhancement).
+
+### Security Scanning Status
+
+**As of Phase 0.9.3:**
+- ✅ CI quality gates enforced (Phase 0.8+)
+- ✅ CodeQL analysis configured (Phase 0.9.3)
+- ✅ Dependabot alerts enabled (Phase 0.9.2, requires GitHub UI config)
+- ⏳ CodeQL results as required status check (configure in branch protection)
+- ⏳ ESLint security plugin (Phase 1.x)
+
 ### Quality Gates (Phase 0.4+)
 
 **ENFORCED:** These checks must pass before merging. Run them locally before creating a PR.

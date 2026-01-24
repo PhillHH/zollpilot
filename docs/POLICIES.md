@@ -241,6 +241,75 @@ TBD - Will be enforced via Prisma middleware and service layer (Phase 0.5+)
 - No `--force` flag for dependency installs without documented reason
 - No pinning dependencies to vulnerable versions without security exception
 
+### CodeQL Findings (Phase 0.9.3)
+
+**Automated Static Analysis:**
+- CodeQL scans all JavaScript/TypeScript code on PRs and pushes to `main`
+- Weekly scheduled scans (Mondays, 06:00 UTC)
+- Uses `security-and-quality` query suite for comprehensive coverage
+- Results uploaded to GitHub Security dashboard
+
+**Severity Handling:**
+
+| Severity | Response SLA | Remediation SLA | Action Required |
+|----------|-------------|-----------------|-----------------|
+| **Critical** | 4 hours | 1 business day | Immediate fix, hotfix branch if in production |
+| **High** | 1 business day | 3 business days | Priority fix, cannot merge PR with new high findings |
+| **Medium** | 3 business days | 1 sprint | Fix in current/next sprint, can merge with justification |
+| **Low** | 1 sprint | 2 sprints | Fix when convenient, tech debt backlog |
+
+**Remediation Workflow:**
+
+1. **Alert Notification (automatic)**
+   - CodeQL findings appear in PR checks
+   - Security tab shows all alerts with severity
+   - GitHub can notify security team (configure in Settings → Code security)
+
+2. **Triage (within Response SLA)**
+   - Review alert description and data flow
+   - Determine if it's a true positive or false positive
+   - Check if code path is reachable in production
+   - Assess exploitability and business impact
+
+3. **Resolution (within Remediation SLA)**
+
+   **For True Positives:**
+   - Fix the vulnerability following CodeQL remediation guidance
+   - Add test case to prevent regression
+   - Document fix in commit message with CVE/CWE reference
+   - Mark alert as "Fixed" (happens automatically on merge)
+
+   **For False Positives:**
+   - Document why it's a false positive (code never executes, input validated elsewhere, etc.)
+   - Add code comment explaining safety
+   - Dismiss alert in GitHub Security tab with reason
+   - Consider adding suppression comment if appropriate
+
+4. **Verification**
+   - Re-run CodeQL scan after fix
+   - Verify alert marked as "Fixed" or "Dismissed"
+   - Update security documentation if pattern is common
+
+**PR Merge Rules:**
+- **Critical/High:** Must be fixed before merging (no exceptions)
+- **Medium:** Can merge with tech lead approval + issue filed
+- **Low:** Can merge freely, track in backlog
+
+**False Positive Rate Management:**
+- Track false positive rate monthly
+- If FP rate >30%, consider adjusting query suite or adding suppressions
+- Document common false positives in team wiki
+
+**Dismissal Reasons (valid):**
+- False positive (explain why)
+- Won't fix (technical debt accepted, not exploitable)
+- Used in tests (test code, not production)
+
+**Dismissal Reasons (invalid):**
+- "Too hard to fix" (not acceptable for Critical/High)
+- "No time" (prioritize security over features)
+- "Unlikely to be exploited" (without evidence)
+
 ### Input Validation
 - Validate all user input
 - Sanitize all output
