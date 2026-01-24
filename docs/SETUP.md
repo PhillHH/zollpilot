@@ -287,7 +287,7 @@ The project uses **Vitest** for unit and integration tests.
 
 ### Test Layers
 
-ZollPilot has two distinct test layers:
+ZollPilot has three distinct test layers:
 
 1. **Unit Tests** - Fast, isolated tests for individual components and functions
    - Files: `*.test.{ts,tsx}` (NOT `*.int.test.{ts,tsx}`)
@@ -301,6 +301,12 @@ ZollPilot has two distinct test layers:
    - Requires PostgreSQL
    - Located next to source files or in test directories
 
+3. **E2E Tests** - End-to-end tests using Playwright (Phase 0.6+)
+   - Files: `*.e2e.spec.{ts,tsx}`
+   - Environment: Chromium browser
+   - No database required in Phase 0
+   - Located in `apps/web/e2e/` directory
+
 ### Running Tests
 
 ```bash
@@ -313,11 +319,20 @@ pnpm test:unit
 # Run integration tests only
 pnpm test:integration
 
+# Run E2E tests (local dev mode - fast)
+pnpm test:e2e
+
+# Run E2E tests (CI mode - build + start, stable)
+pnpm test:e2e:ci
+
+# Run E2E tests with UI mode (interactive)
+pnpm test:e2e:ui
+
+# View E2E test report
+pnpm test:e2e:report
+
 # Run tests in watch mode (unit tests)
 pnpm --filter @zollpilot/web test:watch
-
-# Run E2E tests (TBD - Playwright in later phases)
-pnpm test:e2e
 ```
 
 ### Writing Unit Tests
@@ -416,6 +431,107 @@ pnpm test:integration
 ```
 
 **Note:** Integration tests create their own schema and don't touch your dev data.
+
+### Writing E2E Tests
+
+E2E (End-to-End) tests use Playwright to test the application from a user's perspective in a real browser.
+
+#### E2E Test Structure
+
+E2E tests are located in `apps/web/e2e/` directory with `.e2e.spec.ts` extension:
+
+```typescript
+import { test, expect } from '@playwright/test'
+
+test.describe('Feature Name', () => {
+  test('should do something', async ({ page }) => {
+    await page.goto('/')
+
+    // Use role-based selectors for resilience
+    const heading = page.getByRole('heading', { name: /zollpilot/i })
+    await expect(heading).toBeVisible()
+  })
+})
+```
+
+#### E2E Test Modes
+
+**Local Mode (fast):**
+- Uses `next dev` server
+- Fast hot reload
+- Best for development
+
+```bash
+pnpm test:e2e
+```
+
+**CI Mode (stable):**
+- Uses `next build` + `next start`
+- Production-like environment
+- More reliable, but slower
+- Required for CI/CD
+
+```bash
+pnpm test:e2e:ci
+```
+
+#### E2E Test Best Practices
+
+**Use resilient selectors:**
+```typescript
+// Good - role-based queries
+page.getByRole('heading', { name: /zollpilot/i })
+page.getByRole('link', { name: /admin/i })
+
+// Good - text content
+page.getByText(/structured customs data/i)
+
+// Avoid - fragile CSS selectors
+page.locator('.css-class-12345')
+```
+
+**Test API endpoints directly:**
+```typescript
+test('should check API health', async ({ request }) => {
+  const response = await request.get('/api/health')
+  expect(response.ok()).toBeTruthy()
+  expect(await response.json()).toHaveProperty('status', 'ok')
+})
+```
+
+#### E2E Test Coverage (Phase 0.6)
+
+Current E2E tests cover:
+- **Home Page** - Content visibility and navigation
+- **Admin Page** - Placeholder content and back navigation
+- **Health Check API** - Endpoint availability and response format
+
+**Note:** E2E tests in Phase 0 do NOT require database setup.
+
+#### Playwright UI Mode
+
+For interactive test development:
+
+```bash
+pnpm test:e2e:ui
+```
+
+This opens Playwright UI where you can:
+- Run tests interactively
+- See browser actions in real-time
+- Time-travel through test steps
+- Inspect selectors
+
+#### Prerequisites
+
+**First-time setup:**
+```bash
+# Install Playwright browsers
+npx playwright install chromium
+```
+
+**Browser Installation:**
+Playwright requires Chromium browser to be installed. This is done automatically in CI but must be run manually on first local setup.
 
 ### Test Coverage
 
