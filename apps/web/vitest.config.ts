@@ -8,18 +8,28 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
     globals: true,
+    // Exclude integration tests from unit test runs
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.git/**',
+      '**/*.int.test.{ts,tsx}',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json-summary'],
       exclude: [
         'node_modules/',
         'vitest.config.ts',
+        'vitest.integration.config.ts',
         'vitest.setup.ts',
         'next.config.js',
         '**/*.test.{ts,tsx}',
         '**/*.spec.{ts,tsx}',
+        '**/*.int.test.{ts,tsx}',
         'prisma/',
         'scripts/',
+        'test/',
         '.next/',
       ],
       thresholds: {
