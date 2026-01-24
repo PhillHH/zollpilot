@@ -285,26 +285,42 @@ pnpm lint
 
 The project uses **Vitest** for unit and integration tests.
 
+### Test Layers
+
+ZollPilot has two distinct test layers:
+
+1. **Unit Tests** - Fast, isolated tests for individual components and functions
+   - Files: `*.test.{ts,tsx}` (NOT `*.int.test.{ts,tsx}`)
+   - Environment: jsdom (browser-like)
+   - No database required
+   - Located next to source files
+
+2. **Integration Tests** - Tests that use real database connections
+   - Files: `*.int.test.{ts,tsx}`
+   - Environment: node
+   - Requires PostgreSQL
+   - Located next to source files or in test directories
+
 ### Running Tests
 
 ```bash
-# Run all tests (CI mode)
+# Run all tests (unit + integration)
 pnpm test
 
-# Run tests in watch mode
-pnpm --filter @zollpilot/web test:watch
-
-# Run unit tests
+# Run unit tests only
 pnpm test:unit
 
-# Run integration tests (TBD)
+# Run integration tests only
 pnpm test:integration
+
+# Run tests in watch mode (unit tests)
+pnpm --filter @zollpilot/web test:watch
 
 # Run E2E tests (TBD - Playwright in later phases)
 pnpm test:e2e
 ```
 
-### Writing Tests
+### Writing Unit Tests
 
 Following TDD (Test-Driven Development):
 1. Write failing test first
@@ -312,10 +328,94 @@ Following TDD (Test-Driven Development):
 3. Refactor if needed
 4. Commit
 
-Tests are located next to the files they test:
+Unit tests are located next to the files they test:
 - `src/app/page.tsx` → `src/app/page.test.tsx`
 - `src/app/admin/page.tsx` → `src/app/admin/page.test.tsx`
 - `src/app/api/health/route.ts` → `src/app/api/health/route.test.ts`
+
+### Writing Integration Tests
+
+Integration tests use real PostgreSQL database with **schema-per-run isolation**.
+
+#### Schema-Per-Run Isolation
+
+Each test run creates a unique schema (e.g., `test_1234567890_abc12`) to ensure:
+- Tests don't interfere with development data
+- Tests are isolated from each other across runs
+- Parallel test runs don't conflict
+- Clean state for every test execution
+
+**How it works:**
+1. Global setup creates unique schema and runs migrations
+2. Tests execute in that isolated schema
+3. Global teardown drops the schema (cleanup)
+
+#### Integration Test Structure
+
+```typescript
+import { describe, it, expect, afterEach } from 'vitest'
+import { prisma } from '@/server/db'
+import { truncateAll } from '../../test/db-utils'
+import { createTenant, createUser } from '../../test/factories'
+
+describe('Feature Integration Tests', () => {
+  // Clean between tests within same run
+  afterEach(async () => {
+    await truncateAll(prisma)
+  })
+
+  it('should do something with database', async () => {
+    const tenant = await createTenant(prisma)
+    const user = await createUser(prisma, { tenantId: tenant.id })
+
+    // Your assertions here
+    expect(user.tenantId).toBe(tenant.id)
+  })
+})
+```
+
+#### Test Utilities
+
+**Database Cleanup:**
+```typescript
+import { truncateAll } from '../../test/db-utils'
+await truncateAll(prisma) // Clears all tables
+```
+
+**Data Factories:**
+```typescript
+import { createTenant, createUser, createAuditEvent } from '../../test/factories'
+
+// Create with defaults
+const tenant = await createTenant(prisma)
+
+// Create with overrides
+const admin = await createUser(prisma, {
+  tenantId: tenant.id,
+  email: 'admin@test.local',
+  role: 'ADMIN'
+})
+
+// Factories auto-create dependencies if not provided
+const user = await createUser(prisma) // Creates tenant automatically
+```
+
+#### Prerequisites for Integration Tests
+
+Integration tests require a running PostgreSQL database:
+
+```bash
+# 1. Start database
+pnpm db:up
+
+# 2. Run migrations (dev database)
+pnpm prisma:migrate
+
+# 3. Run integration tests
+pnpm test:integration
+```
+
+**Note:** Integration tests create their own schema and don't touch your dev data.
 
 ### Test Coverage
 

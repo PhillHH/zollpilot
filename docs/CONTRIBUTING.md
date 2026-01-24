@@ -309,6 +309,127 @@ export function Component() { ... }
 
 ## Testing Standards
 
+### Test Layers (Phase 0.5+)
+
+ZollPilot has **three distinct test layers**:
+
+#### 1. Unit Tests
+
+**Purpose:** Fast, isolated tests for individual components and functions
+
+**Characteristics:**
+- File naming: `*.test.{ts,tsx}` (NOT `*.int.test.{ts,tsx}`)
+- Environment: jsdom (browser-like for React components)
+- No database required
+- No external dependencies
+- Mocked where necessary
+
+**Example:**
+```typescript
+// src/app/page.test.tsx
+import { render, screen } from '@testing-library/react'
+import Page from './page'
+
+describe('Home Page', () => {
+  it('should render welcome message', () => {
+    render(<Page />)
+    expect(screen.getByText(/welcome/i)).toBeInTheDocument()
+  })
+})
+```
+
+**Run unit tests:**
+```bash
+pnpm test:unit
+```
+
+#### 2. Integration Tests
+
+**Purpose:** Tests that verify database interactions and multi-module integration
+
+**Characteristics:**
+- File naming: `*.int.test.{ts,tsx}` (MUST include `.int.`)
+- Environment: node
+- Requires PostgreSQL database
+- Uses real Prisma client
+- Schema-per-run isolation (each test run uses unique schema)
+
+**Example:**
+```typescript
+// src/server/db.int.test.ts
+import { describe, it, expect, afterEach } from 'vitest'
+import { prisma } from '@/server/db'
+import { truncateAll } from '../../test/db-utils'
+import { createTenant, createUser } from '../../test/factories'
+
+describe('Database Integration', () => {
+  afterEach(async () => {
+    await truncateAll(prisma)
+  })
+
+  it('should create and query tenant', async () => {
+    const tenant = await createTenant(prisma, {
+      name: 'Test Tenant'
+    })
+
+    const found = await prisma.tenant.findUnique({
+      where: { id: tenant.id }
+    })
+
+    expect(found).toEqual(tenant)
+  })
+})
+```
+
+**Prerequisites:**
+```bash
+# Start database
+pnpm db:up
+
+# Run integration tests
+pnpm test:integration
+```
+
+**Schema-Per-Run Isolation:**
+- Each test run creates a unique schema (e.g., `test_1234567890_abc12`)
+- Tests never touch development data
+- Global setup creates schema and runs migrations
+- Global teardown drops schema
+- Use `truncateAll()` in `afterEach` to clean between tests
+
+**Test Utilities:**
+
+```typescript
+// Database cleanup
+import { truncateAll } from '../../test/db-utils'
+await truncateAll(prisma) // Clears all tables in test schema
+
+// Data factories (auto-create dependencies)
+import { createTenant, createUser, createAuditEvent } from '../../test/factories'
+
+const tenant = await createTenant(prisma)
+const admin = await createUser(prisma, {
+  tenantId: tenant.id,
+  email: 'admin@test.local',
+  role: 'ADMIN'
+})
+```
+
+**Run integration tests:**
+```bash
+pnpm test:integration
+```
+
+#### 3. E2E Tests (Phase TBD)
+
+**Purpose:** Full end-to-end user flows with Playwright
+
+**Status:** To be implemented in later phases
+
+```bash
+pnpm test:e2e
+```
+
 ### Test Structure
 
 ```typescript
@@ -328,11 +449,33 @@ describe('Feature', () => {
 })
 ```
 
+### Choosing the Right Test Layer
+
+**Use Unit Tests for:**
+- React component rendering and props
+- Pure functions and utilities
+- Business logic without database
+- Anything that can be tested in isolation
+
+**Use Integration Tests for:**
+- Database queries and mutations
+- Prisma model interactions
+- Multi-tenancy isolation
+- Audit trail generation
+- API routes that use database
+
+**Use E2E Tests for:**
+- Full user workflows
+- Browser-specific behavior
+- Authentication flows
+- Cross-page interactions
+
 ### Coverage Requirements
 
-- **Minimum:** 80% overall coverage
+- **Minimum:** 80% overall coverage (unit tests)
 - **Critical paths:** 100% coverage
 - **Public APIs:** 100% coverage
+- **Integration tests:** Must cover all database models and interactions
 
 ## Documentation Standards
 
