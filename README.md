@@ -8,7 +8,7 @@ ZollPilot helps organizations efficiently manage and navigate customs data with 
 
 ## Project Status
 
-**Phase:** 0.9.3 - CodeQL security analysis and static application security testing
+**Phase:** 0.10 - Documentation drift gate with automated sync validation
 **Next:** Phase 1 - Core features implementation
 
 ## Features (Planned)

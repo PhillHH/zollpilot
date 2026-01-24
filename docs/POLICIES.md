@@ -352,7 +352,7 @@ The following checks **run automatically** on every pull request:
 - ✅ Unit tests (≥80% coverage) - **RUNS IN CI**
 - ✅ Integration tests (Postgres + Prisma) - **RUNS IN CI**
 - ✅ E2E tests (Playwright smoke tests) - **RUNS IN CI**
-- ⏳ Documentation drift check (Phase 0.10)
+- ✅ Documentation drift check (Phase 0.10) - **RUNS IN CI**
 - ⏳ Security audit (dependencies)
 
 #### Enforcement Status (Phase 0.9.1)
@@ -401,6 +401,35 @@ Without branch protection (default):
 - Docs reviewed as part of PR
 - Technical accuracy verified
 - Clarity and completeness checked
+
+### Drift Prevention (Phase 0.10)
+
+**Policy:** Documentation must stay in sync with code at all times. Documentation drift is a merge-blocking failure.
+
+**Automated Checks:**
+- `pnpm docs:check` runs in CI on every PR
+- Validates internal markdown links (file existence, anchors)
+- Verifies documented routes/endpoints exist in codebase
+- Fails CI if drift detected
+
+**Developer Responsibilities:**
+- Run `pnpm docs:check` locally before committing documentation changes
+- Update documentation in the **same PR** as code changes
+- Never merge code that breaks documented routes without updating docs
+- Use allowlist (`scripts/docs-check.config.json`) only for planned features with justification
+
+**Allowlist Rules:**
+- Allowlist is for **planned features only** (e.g., documented in Phase 1 but not yet implemented)
+- All allowlist entries must include:
+  - Reason/justification comment
+  - Phase/sprint reference for implementation
+  - Regular quarterly review to remove obsolete entries
+- **Anti-pattern:** Adding items to allowlist to avoid fixing drift
+
+**Remediation SLA:**
+- Documentation drift found in PR review: **Must fix before merge** (no exceptions)
+- Documentation drift found post-merge: **Fix within 1 business day**
+- Broken external links: **Fix within 1 week** (non-blocking)
 
 ## 10. Monitoring & Observability
 
