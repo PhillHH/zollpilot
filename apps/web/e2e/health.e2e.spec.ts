@@ -36,4 +36,32 @@ test.describe('Health Check API', () => {
     expect(response.status()).not.toBe(403)
     expect(response.status()).toBe(200)
   })
+
+  test('should return security headers (Phase 0.11)', async ({ request }) => {
+    const response = await request.get('/api/health')
+    const headers = response.headers()
+
+    // X-Content-Type-Options: Prevent MIME sniffing
+    expect(headers['x-content-type-options']).toBe('nosniff')
+
+    // X-Frame-Options: Prevent clickjacking
+    expect(headers['x-frame-options']).toBe('DENY')
+
+    // Referrer-Policy: Control referrer information
+    expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin')
+
+    // Permissions-Policy: Disable sensitive APIs
+    expect(headers['permissions-policy']).toBeDefined()
+    expect(headers['permissions-policy']).toContain('camera=()')
+    expect(headers['permissions-policy']).toContain('microphone=()')
+
+    // X-DNS-Prefetch-Control: Prevent DNS prefetching
+    expect(headers['x-dns-prefetch-control']).toBe('off')
+
+    // Ensure X-Powered-By is not present (security through obscurity)
+    expect(headers['x-powered-by']).toBeUndefined()
+
+    // Note: Strict-Transport-Security (HSTS) only in production
+    // Not tested here as E2E runs in non-production mode
+  })
 })

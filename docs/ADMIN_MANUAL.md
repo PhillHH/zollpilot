@@ -28,7 +28,9 @@ Das ZollPilot Admin-Backend bietet Werkzeuge für:
 
 **Qualitätssicherung:** Die Plattform unterliegt strengen automatisierten Qualitätskontrollen mit ≥80% Testabdeckung.
 
-## Aktueller Status (Phase 0.4)
+**Sicherheit:** Sicherheitsmaßnahmen werden technisch und organisatorisch umgesetzt.
+
+## Aktueller Status (Phase 0.11)
 
 ### Verfügbare Admin-Seite
 

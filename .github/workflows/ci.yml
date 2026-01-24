@@ -61,6 +61,9 @@ jobs:
       - name: Run unit tests with coverage
         run: pnpm test:coverage
 
+      - name: Security audit (high/critical vulnerabilities)
+        run: pnpm security:audit
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4

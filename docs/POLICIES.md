@@ -353,7 +353,7 @@ The following checks **run automatically** on every pull request:
 - ✅ Integration tests (Postgres + Prisma) - **RUNS IN CI**
 - ✅ E2E tests (Playwright smoke tests) - **RUNS IN CI**
 - ✅ Documentation drift check (Phase 0.10) - **RUNS IN CI**
-- ⏳ Security audit (dependencies)
+- ✅ Security audit - high/critical vulnerabilities (Phase 0.11) - **RUNS IN CI**
 
 #### Enforcement Status (Phase 0.9.1)
 

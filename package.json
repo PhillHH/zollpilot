@@ -25,6 +25,7 @@
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "typecheck": "pnpm --filter @zollpilot/web typecheck",
     "docs:check": "node scripts/docs-check.mjs",
+    "security:audit": "pnpm audit --audit-level=high --production",
     "db:up": "docker compose -f docker-compose.dev.yml up -d",
     "db:down": "docker compose -f docker-compose.dev.yml down",
     "db:reset": "docker compose -f docker-compose.dev.yml down -v",

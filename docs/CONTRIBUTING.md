@@ -682,19 +682,25 @@ pnpm lint        # ESLint catches some security anti-patterns
 pnpm typecheck   # Type safety prevents many runtime errors
 pnpm test        # Tests catch regressions and bugs
 
-# Audit dependencies for vulnerabilities
-pnpm audit       # Check for known CVEs in dependencies
-pnpm audit --fix # Automatically fix vulnerabilities when possible
+# Audit dependencies for high/critical vulnerabilities (Phase 0.11)
+pnpm security:audit  # Check for high/critical CVEs (same as CI)
+
+# Full audit (all severities, more verbose)
+pnpm audit           # Check all CVE severities
+pnpm audit --fix     # Automatically fix vulnerabilities when possible
 ```
 
 **Note:** CodeQL requires GitHub infrastructure and cannot run fully locally, but you can use ESLint security plugins for similar local checks (future enhancement).
 
 ### Security Scanning Status
 
-**As of Phase 0.9.3:**
+**As of Phase 0.11:**
 - ✅ CI quality gates enforced (Phase 0.8+)
 - ✅ CodeQL analysis configured (Phase 0.9.3)
 - ✅ Dependabot alerts enabled (Phase 0.9.2, requires GitHub UI config)
+- ✅ Dependency security audit (Phase 0.11) - high/critical vulnerabilities block CI
+- ✅ HTTP security headers enforced (Phase 0.11) - runtime E2E tested
+- ✅ Environment validation (Phase 0.11) - fail-fast on misconfiguration
 - ⏳ CodeQL results as required status check (configure in branch protection)
 - ⏳ ESLint security plugin (Phase 1.x)
 
