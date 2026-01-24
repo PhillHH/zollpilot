@@ -14,10 +14,12 @@
     "start": "pnpm --filter @zollpilot/web start",
     "test": "pnpm --filter @zollpilot/web test",
     "test:unit": "pnpm --filter @zollpilot/web test",
+    "test:coverage": "pnpm --filter @zollpilot/web test:coverage",
     "test:integration": "echo 'Integration test script - TBD'",
     "test:e2e": "echo 'E2E test script - TBD'",
     "lint": "pnpm --filter @zollpilot/web lint",
-    "format": "echo 'Format script - TBD'",
+    "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "typecheck": "pnpm --filter @zollpilot/web typecheck",
     "docs:check": "echo 'Doc drift check - TBD in Phase 0.10'",
     "db:up": "docker compose -f docker-compose.dev.yml up -d",
@@ -35,5 +37,8 @@
     "data-management"
   ],
   "author": "",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "^3.8.1"
+  }
 }

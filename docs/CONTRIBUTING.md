@@ -172,8 +172,106 @@ All PRs must pass:
 - ✅ All tests (unit, integration, E2E)
 - ✅ Type checking
 - ✅ Linting
+- ✅ Code formatting
+- ✅ Coverage thresholds (≥80%)
 - ✅ Documentation drift check
 - ✅ Code review (min. 1 approval)
+
+### Quality Gates (Phase 0.4+)
+
+**ENFORCED:** These checks must pass before merging. Run them locally before creating a PR.
+
+#### Run All Quality Gates
+
+```bash
+# Check all gates at once
+pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm format
+```
+
+#### Individual Quality Gates
+
+**1. Linting (ESLint)**
+
+Checks code for style issues and potential bugs.
+
+```bash
+# Check for linting errors
+pnpm lint
+
+# Auto-fix linting errors (when possible)
+pnpm --filter @zollpilot/web lint --fix
+```
+
+**2. Type Checking (TypeScript)**
+
+Validates TypeScript types in strict mode.
+
+```bash
+# Run type checking
+pnpm typecheck
+```
+
+**3. Testing with Coverage**
+
+Runs all tests and enforces ≥80% coverage on lines, functions, branches, and statements.
+
+```bash
+# Run tests without coverage (fast)
+pnpm test
+
+# Run tests with coverage (enforces thresholds)
+pnpm test:coverage
+
+# Watch mode for development
+pnpm --filter @zollpilot/web test:watch
+```
+
+**Coverage Thresholds (ENFORCED):**
+- Lines: ≥80%
+- Functions: ≥80%
+- Branches: ≥80%
+- Statements: ≥80%
+
+**Note:** `test:coverage` will FAIL if any threshold is not met. This is intentional.
+
+**4. Code Formatting (Prettier)**
+
+Ensures consistent code formatting across the codebase.
+
+```bash
+# Check formatting (CI-safe)
+pnpm format
+
+# Apply formatting (fix)
+pnpm format:write
+```
+
+#### Pre-Commit Checklist
+
+Before committing, ensure:
+1. ✅ `pnpm lint` passes
+2. ✅ `pnpm typecheck` passes
+3. ✅ `pnpm test:coverage` passes (all tests + coverage ≥80%)
+4. ✅ `pnpm format` passes
+
+#### TDD Reminder
+
+**MANDATORY:** Write tests BEFORE implementation.
+
+1. Write failing test
+2. Run `pnpm test:watch` (watch mode)
+3. Implement minimal code to pass
+4. Verify coverage with `pnpm test:coverage`
+5. Refactor if needed
+6. Commit
+
+#### Nothing Undocumented Reminder
+
+Every feature must be documented:
+- Public features → `docs/USER_MANUAL.md`
+- Admin features → `docs/ADMIN_MANUAL.md`
+- Technical changes → `docs/SETUP.md` or `docs/ARCHITECTURE.md`
+- Breaking changes → Update `CONTRIBUTING.md`
 
 ## Code Standards
 

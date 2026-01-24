@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+.next
+out
+dist
+build
+**/dist
+**/.next
+
+# Generated files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+*.tsbuildinfo
+
+# Prisma generated
+**/prisma/migrations
+**/.prisma
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Coverage
+coverage
+**/.nyc_output
+
+# Misc
+.DS_Store
+*.log
+*.md

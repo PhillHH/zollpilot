@@ -10,19 +10,34 @@ All code must be written test-first.
 ### Requirements
 - Write failing test before implementation
 - No implementation without corresponding tests
-- Minimum 80% code coverage
+- **ENFORCED:** Minimum 80% code coverage (lines, functions, branches, statements)
 - Critical paths require 100% coverage
+
+### Coverage Enforcement (Phase 0.4+)
+
+**Automated threshold checks:**
+- Lines: ≥80%
+- Functions: ≥80%
+- Branches: ≥80%
+- Statements: ≥80%
+
+**Command:** `pnpm test:coverage`
+
+**Enforcement:** The test:coverage command will FAIL if any threshold is not met. This prevents merging code with insufficient coverage.
+
+**Configuration:** See `apps/web/vitest.config.ts` for threshold settings.
 
 ### Process
 ```
 1. Write test (red)
 2. Write minimal code to pass (green)
 3. Refactor (refactor)
-4. Commit
+4. Verify coverage: pnpm test:coverage
+5. Commit
 ```
 
 ### Exceptions
-None. TDD is mandatory.
+None. TDD is mandatory. Coverage thresholds are enforced.
 
 ## 2. Nothing Undocumented
 
@@ -170,16 +185,30 @@ TBD - Will be enforced via Prisma middleware and service layer (Phase 0.5+)
 - Use secure session management
 - RBAC for admin functions
 
-## 8. CI/CD Gates (Phase 0.8+)
+## 8. CI/CD Gates
 
-### Pre-Merge Gates
+### Quality Gates (ENFORCED in Phase 0.4+)
+
+**Locally Enforced (before commit):**
+- ✅ TypeScript type checking (`pnpm typecheck`)
+- ✅ Linting (`pnpm lint`)
+- ✅ Code formatting (`pnpm format`)
+- ✅ Unit tests with ≥80% coverage (`pnpm test:coverage`)
+
+**Run all gates:**
+```bash
+pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm format
+```
+
+### Pre-Merge Gates (Phase 0.8+ CI automation)
 All PRs must pass:
-- ✅ TypeScript type checking
-- ✅ Linting (ESLint + Prettier)
-- ✅ Unit tests (min. 80% coverage)
-- ✅ Integration tests
-- ✅ E2E tests (critical paths)
-- ✅ Documentation drift check
+- ✅ TypeScript type checking (strict mode)
+- ✅ Linting (ESLint)
+- ✅ Code formatting (Prettier)
+- ✅ Unit tests (≥80% coverage ENFORCED)
+- ✅ Integration tests (TBD)
+- ✅ E2E tests (critical paths, TBD)
+- ✅ Documentation drift check (TBD)
 - ✅ Security audit (dependencies)
 
 ### Deployment Gates

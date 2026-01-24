@@ -7,7 +7,7 @@
 ## Inhaltsverzeichnis
 
 - [Einführung](#einführung)
-- [Aktueller Status (Phase 0.3)](#aktueller-status-phase-03)
+- [Aktueller Status (Phase 0.4)](#aktueller-status-phase-04)
 - [Admin-Zugang](#admin-zugang)
 - [Preiskonfiguration](#preiskonfiguration)
 - [Logging & Monitoring](#logging--monitoring)
@@ -26,7 +26,9 @@ Das ZollPilot Admin-Backend bietet Werkzeuge für:
 
 **KRITISCH:** Alle Admin-Aktionen erzeugen unveränderliche Audit-Events.
 
-## Aktueller Status (Phase 0.3)
+**Qualitätssicherung:** Die Plattform unterliegt strengen automatisierten Qualitätskontrollen mit ≥80% Testabdeckung.
+
+## Aktueller Status (Phase 0.4)
 
 ### Verfügbare Admin-Seite
 

@@ -11,7 +11,9 @@ describe('Home Page', () => {
 
   it('renders the welcome message', () => {
     render(<Home />)
-    expect(screen.getByText(/Structured customs data management/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Structured customs data management/i)
+    ).toBeInTheDocument()
   })
 
   it('renders navigation link to admin', () => {
