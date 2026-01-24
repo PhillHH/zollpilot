@@ -37,7 +37,7 @@ cd zollpilot
 # 2. Use correct Node version
 nvm use
 
-# 3. Install dependencies
+# 3. Install dependencies (also installs git hooks automatically)
 pnpm install
 
 # 4. Setup environment variables
@@ -65,6 +65,13 @@ pnpm dev
 The application will be running at `http://localhost:3000`.
 
 **First time setup:** Steps 4-8 set up your local database. After initial setup, you only need `pnpm db:up` and `pnpm dev`.
+
+**Git Hooks (Phase 0.7+):** Git hooks are automatically installed during `pnpm install`. These hooks:
+- Format and lint code on commit (pre-commit)
+- Validate commit messages (commit-msg)
+- Run unit tests before push (pre-push)
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md#local-hooks-phase-07) for details on bypassing hooks in emergencies.
 
 ## Project Structure
 
