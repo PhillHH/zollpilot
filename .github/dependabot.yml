@@ -1,0 +1,67 @@
+# Dependabot configuration for automated dependency updates
+# See: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
+
+version: 2
+updates:
+  # pnpm workspace dependencies (monorepo root)
+  # Scans pnpm-lock.yaml and all workspace package.json files
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'Europe/Berlin'
+    open-pull-requests-limit: 5
+    labels:
+      - 'dependencies'
+      - 'automated'
+    commit-message:
+      prefix: 'chore(deps)'
+      include: 'scope'
+    groups:
+      # Group development tooling updates to reduce PR noise
+      dev-dependencies:
+        patterns:
+          - 'eslint*'
+          - 'prettier*'
+          - '@typescript-eslint/*'
+          - 'typescript'
+          - 'vitest*'
+          - '@vitest/*'
+          - 'playwright*'
+          - '@playwright/*'
+          - 'husky'
+          - 'lint-staged'
+          - 'commitlint*'
+          - '@commitlint/*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      # Group runtime dependencies separately for careful review
+      runtime-dependencies:
+        patterns:
+          - 'next'
+          - 'react'
+          - 'react-dom'
+          - '@prisma/*'
+          - 'prisma'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+  # GitHub Actions workflow updates
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'Europe/Berlin'
+    open-pull-requests-limit: 3
+    labels:
+      - 'dependencies'
+      - 'ci'
+      - 'automated'
+    commit-message:
+      prefix: 'chore(ci)'

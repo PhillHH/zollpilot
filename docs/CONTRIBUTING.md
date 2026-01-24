@@ -517,6 +517,89 @@ Follow the exact steps above to configure branch protection in GitHub Settings.
 - **Cause:** "Do not allow bypassing the above settings" is unchecked
 - **Solution:** Enable this setting to enforce rules even for admins
 
+## Security Settings (Phase 0.9.2)
+
+**IMPORTANT:** Dependabot and security scanning features are configured in `.github/dependabot.yml`, but additional security features must be enabled manually in GitHub repository settings.
+
+### Automated Dependency Updates (Dependabot)
+
+**Already Configured (Phase 0.9.2):**
+- ✅ `.github/dependabot.yml` exists and scans:
+  - npm dependencies (pnpm workspace, weekly schedule)
+  - GitHub Actions (weekly schedule)
+- ✅ Updates grouped to reduce PR noise:
+  - `dev-dependencies` group (tooling: eslint, prettier, vitest, playwright, etc.)
+  - `runtime-dependencies` group (next, react, prisma)
+- ✅ Maximum 5 open dependency PRs at a time
+- ✅ Conventional commit format: `chore(deps):` or `chore(ci):`
+
+**Manual Configuration Required (GitHub UI):**
+
+Dependabot configuration file alone is not enough. Repository admins must enable Dependabot features in GitHub Settings:
+
+1. **Enable Dependabot Alerts**
+   - Go to **Settings → Code security and analysis**
+   - Under "Dependabot alerts":
+     - Click **Enable** (if not already enabled)
+   - This provides vulnerability alerts for dependencies
+
+2. **Enable Dependabot Security Updates**
+   - In the same section, under "Dependabot security updates":
+     - Click **Enable** (if not already enabled)
+   - This automatically creates PRs for security vulnerabilities
+   - **Note:** This is separate from version updates (configured in `dependabot.yml`)
+
+3. **Enable Dependabot Version Updates**
+   - Under "Dependabot version updates":
+     - Should show **"Dependabot is active"** if `dependabot.yml` is valid
+   - If not active, check the configuration file for syntax errors
+
+### Secret Scanning and Push Protection
+
+**Manual Configuration Required (GitHub UI):**
+
+1. **Enable Secret Scanning**
+   - Go to **Settings → Code security and analysis**
+   - Under "Secret scanning":
+     - Click **Enable** (if available - may require GitHub Advanced Security for private repos)
+   - Scans repository for accidentally committed secrets (API keys, tokens, etc.)
+
+2. **Enable Secret Scanning Push Protection** (Recommended)
+   - Under "Secret scanning push protection":
+     - Click **Enable** (if available)
+   - **Prevents** pushes containing detected secrets
+   - Developers will receive an error when attempting to push secrets
+   - Provides option to bypass (with justification) if it's a false positive
+
+### Security Settings Verification Checklist
+
+After configuring settings, verify:
+
+- [ ] **Dependabot alerts enabled** - Visit "Security" tab → "Dependabot alerts"
+- [ ] **Dependabot security updates enabled** - Check for auto-generated security PRs
+- [ ] **Dependabot version updates active** - Check for weekly update PRs (Mondays)
+- [ ] **Secret scanning enabled** - Visit "Security" tab → "Secret scanning"
+- [ ] **Push protection enabled** - Test by trying to commit a fake API key locally
+
+### Current Security Status
+
+**As of Phase 0.9.2:**
+- ✅ Dependabot configuration file created
+- ⏳ Dependabot alerts (manual GitHub UI configuration required)
+- ⏳ Dependabot security updates (manual GitHub UI configuration required)
+- ⏳ Secret scanning (manual GitHub UI configuration required)
+- ⏳ Secret scanning push protection (manual GitHub UI configuration required)
+
+**To enable full security scanning:**
+Follow the exact steps above to configure security features in GitHub Settings.
+
+### Dependency Update Review Policy
+
+See [docs/POLICIES.md](POLICIES.md#dependency-management-phase-092) for:
+- Dependency update review and merge timelines
+- Emergency security patch workflow
+- Breaking change handling
+
 ### Quality Gates (Phase 0.4+)
 
 **ENFORCED:** These checks must pass before merging. Run them locally before creating a PR.

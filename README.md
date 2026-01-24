@@ -8,7 +8,7 @@ ZollPilot helps organizations efficiently manage and navigate customs data with 
 
 ## Project Status
 
-**Phase:** 0.9.1 - Branch protection documentation and merge gate enforcement
+**Phase:** 0.9.2 - Dependabot configuration and security scanning documentation
 **Next:** Phase 1 - Core features implementation
 
 ## Features (Planned)
@@ -127,7 +127,7 @@ See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for full guidelines.
 
 ### Security
 - No secrets in repository
-- Regular dependency audits
+- Automated dependency monitoring (Dependabot)
 - Input validation everywhere
 - OWASP compliance
 
