@@ -17,7 +17,7 @@
 
 ZollPilot hilft Ihnen, Zolldaten strukturiert zu erfassen und zu verwalten.
 
-**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.5).
+**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.6).
 _Hinweis: Die technische Infrastruktur für die Datenspeicherung wird derzeit vorbereitet. Technische Qualitätssicherung ist durch automatisierte Tests abgesichert._
 
 ## Erste Schritte

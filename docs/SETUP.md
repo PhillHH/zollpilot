@@ -121,6 +121,20 @@ pnpm test:integration
 
 These tests run in isolation (one schema per test run) and clean up automatically.
 
+### E2E Tests
+
+End-to-End tests verify the running application.
+
+```bash
+# Run locally (uses dev server)
+pnpm test:e2e
+
+# Run in CI mode (builds and runs production server)
+pnpm test:e2e:ci
+```
+
+**Note:** In Phase 0, E2E tests do not require a database connection as they only test static pages and health checks.
+
 ## Running the Application
 
 ### Development Mode

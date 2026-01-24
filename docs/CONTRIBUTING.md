@@ -115,11 +115,13 @@ We enforce high standards using automated tools.
 | `pnpm test` | Runs unit tests (no DB required) |
 | `pnpm test:coverage` | Runs unit tests and enforces 80% coverage |
 | `pnpm test:integration` | Runs integration tests (requires DB) |
+| `pnpm test:e2e` | Runs E2E tests (Playwright) |
 
 ### Test Layers
 
-- **Unit Tests (`*.test.ts`):** Fast, mocked dependencies, no DB.
-- **Integration Tests (`*.int.test.ts`):** Real DB (via Docker), schema-per-run isolation.
+- **Unit Tests (`*.test.ts`):** Fast, mocked dependencies, no DB. Use for logic verification.
+- **Integration Tests (`*.int.test.ts`):** Real DB (via Docker), schema-per-run isolation. Use for data persistence.
+- **E2E Tests (`e2e/*.spec.ts`):** Full browser tests via Playwright. Use for critical user flows and smoke tests.
 
 ## Code Standards
 

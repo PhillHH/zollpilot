@@ -4,7 +4,6 @@ export const teardown = async () => {
   const schema = process.env.TEST_SCHEMA
   if (!schema) return
 
-  const originalUrl = process.env.DATABASE_URL || ''
   // Use a connection string without the specific schema param to drop the schema
   // We can just rely on the existing DATABASE_URL env which has the schema,
   // but it's cleaner to connect to the default DB to drop a schema.
