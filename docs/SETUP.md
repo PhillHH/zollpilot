@@ -107,6 +107,20 @@ The project uses Postgres (via Docker) and Prisma.
    pnpm --filter @zollpilot/web ts-node --compiler-options '{"module":"CommonJS"}' scripts/db-check.ts
    ```
 
+### Integration Tests (DB)
+
+Integration tests require the Docker database to be running.
+
+```bash
+# 1. Start database
+pnpm db:up
+
+# 2. Run integration tests
+pnpm test:integration
+```
+
+These tests run in isolation (one schema per test run) and clean up automatically.
+
 ## Running the Application
 
 ### Development Mode

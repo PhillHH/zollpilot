@@ -112,8 +112,14 @@ We enforce high standards using automated tools.
 | `pnpm typecheck`     | Runs TypeScript compiler (strict mode)    |
 | `pnpm format`        | Checks code formatting (Prettier)         |
 | `pnpm format:write`  | Fixes code formatting (Prettier)          |
-| `pnpm test`          | Runs unit tests                           |
+| `pnpm test` | Runs unit tests (no DB required) |
 | `pnpm test:coverage` | Runs unit tests and enforces 80% coverage |
+| `pnpm test:integration` | Runs integration tests (requires DB) |
+
+### Test Layers
+
+- **Unit Tests (`*.test.ts`):** Fast, mocked dependencies, no DB.
+- **Integration Tests (`*.int.test.ts`):** Real DB (via Docker), schema-per-run isolation.
 
 ## Code Standards
 
