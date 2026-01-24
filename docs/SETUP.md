@@ -37,18 +37,19 @@ cd zollpilot
 # 2. Use correct Node version
 nvm use
 
-# 3. Install dependencies (Phase 0.2+)
+# 3. Install dependencies
 pnpm install
 
-# 4. Setup environment variables (TBD)
-cp .env.example .env.local
+# 4. Run development server
+pnpm dev
 
-# 5. Setup database (TBD)
-# pnpm db:setup
-
-# 6. Run development server (TBD in Phase 0.2)
-# pnpm dev
+# 5. Open browser
+# Navigate to http://localhost:3000
 ```
+
+The application will be running at `http://localhost:3000`.
+
+**Note:** Database setup and environment variables will be required starting in Phase 0.3.
 
 ## Project Structure
 
@@ -74,38 +75,90 @@ TBD - Prisma migrations and seeding
 
 ## Running the Application
 
-TBD - Available in Phase 0.2
-
 ### Development Mode
+
+Start the Next.js development server with hot reload:
+
 ```bash
-# TBD
 pnpm dev
 ```
 
+The application will be available at `http://localhost:3000`.
+
+Available routes:
+- `/` - Home page (public portal)
+- `/admin` - Admin area (placeholder, features coming in Phase 2)
+- `/api/health` - Health check endpoint
+
 ### Production Build
+
+Build and run in production mode:
+
 ```bash
-# TBD
+# Build the application
 pnpm build
+
+# Start production server
 pnpm start
+```
+
+### Type Checking
+
+Run TypeScript type checking without building:
+
+```bash
+pnpm typecheck
+```
+
+### Linting
+
+Check code for linting errors:
+
+```bash
+pnpm lint
 ```
 
 ## Testing
 
-TBD - Testing setup in later phases
+The project uses **Vitest** for unit and integration tests.
+
+### Running Tests
 
 ```bash
-# Unit tests
+# Run all tests (CI mode)
+pnpm test
+
+# Run tests in watch mode
+pnpm --filter @zollpilot/web test:watch
+
+# Run unit tests
 pnpm test:unit
 
-# Integration tests
+# Run integration tests (TBD)
 pnpm test:integration
 
-# E2E tests
+# Run E2E tests (TBD - Playwright in later phases)
 pnpm test:e2e
-
-# All tests
-pnpm test
 ```
+
+### Writing Tests
+
+Following TDD (Test-Driven Development):
+1. Write failing test first
+2. Implement minimal code to pass
+3. Refactor if needed
+4. Commit
+
+Tests are located next to the files they test:
+- `src/app/page.tsx` → `src/app/page.test.tsx`
+- `src/app/admin/page.tsx` → `src/app/admin/page.test.tsx`
+- `src/app/api/health/route.ts` → `src/app/api/health/route.test.ts`
+
+### Test Coverage
+
+Minimum coverage requirements (enforced in CI later):
+- Overall: 80%
+- Critical paths: 100%
 
 ## Troubleshooting
 
