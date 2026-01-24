@@ -269,6 +269,120 @@ All PRs must pass:
 - ✅ Documentation drift check
 - ✅ Code review (min. 1 approval)
 
+## CI Pipeline (Phase 0.8+)
+
+The CI pipeline runs automatically on pull requests and pushes to main/feature branches. It enforces all quality gates and must pass before merging.
+
+### CI Jobs
+
+The pipeline consists of three parallel jobs:
+
+#### 1. Quality Gates Job
+
+**What it does:**
+- Checks code formatting with Prettier
+- Runs ESLint for code quality
+- Runs TypeScript type checking
+- Runs unit tests with coverage enforcement (≥80%)
+
+**Local equivalent:**
+```bash
+pnpm format        # Check formatting
+pnpm lint          # Run ESLint
+pnpm typecheck     # Type check
+pnpm test:coverage # Unit tests with coverage
+```
+
+**Common failures:**
+- **Format check fails:** Run `pnpm format:write` to auto-fix
+- **Lint fails:** Run `pnpm lint --fix` or fix manually
+- **Type errors:** Fix TypeScript errors in reported files
+- **Coverage below 80%:** Add tests to increase coverage
+
+#### 2. Integration Tests Job
+
+**What it does:**
+- Spins up PostgreSQL service container
+- Generates Prisma client
+- Runs database migrations
+- Executes integration tests with schema-per-run isolation
+
+**Local equivalent:**
+```bash
+pnpm db:up                   # Start PostgreSQL
+pnpm prisma:generate         # Generate Prisma client
+pnpm prisma:migrate:deploy   # Run migrations
+pnpm test:integration        # Run integration tests
+```
+
+**Common failures:**
+- **Migration fails:** Check migration files in `apps/web/prisma/migrations/`
+- **Connection errors:** Verify DATABASE_URL is set correctly
+- **Schema conflicts:** Ensure schema-per-run creates unique schemas
+- **Test failures:** Check test logs for specific failures
+
+#### 3. E2E Tests Job
+
+**What it does:**
+- Installs Playwright browsers (Chromium)
+- Runs E2E tests in CI mode (next build + next start)
+- Uploads test reports and traces on failure
+
+**Local equivalent:**
+```bash
+npx playwright install chromium  # Install browser (first time only)
+pnpm test:e2e:ci                 # Run E2E tests in CI mode
+```
+
+**Common failures:**
+- **Browser not found:** Playwright cache issue, will reinstall on retry
+- **Server timeout:** Build step taking too long, check Next.js build
+- **Test failures:** Check Playwright report artifact for screenshots/traces
+- **Selector errors:** UI changed, update selectors in E2E tests
+
+### Debugging CI Failures
+
+**View detailed logs:**
+1. Click on the failing job in GitHub Actions
+2. Expand the failed step to see full output
+3. Check uploaded artifacts for reports (coverage, Playwright)
+
+**Reproduce locally:**
+Run the exact commands from the failed job (see "Local equivalent" above).
+
+**Playwright failures:**
+1. Download the `playwright-report` artifact from the failed run
+2. Extract and open `index.html` to see interactive report
+3. View screenshots, traces, and video recordings of failures
+
+**Integration test failures:**
+1. Check if migrations are up to date: `pnpm prisma:migrate:deploy`
+2. Verify PostgreSQL is running: `pnpm db:up`
+3. Check DATABASE_URL matches expected format
+4. Run tests locally with same DATABASE_URL as CI
+
+### CI Status Checks
+
+All three jobs must pass before a PR can be merged:
+- ✅ Quality Gates
+- ✅ Integration Tests
+- ✅ E2E Tests
+
+**Branch Protection:**
+Main branch requires:
+- All status checks to pass
+- At least 1 approving review
+- Up-to-date with base branch
+
+To configure branch protection in GitHub:
+1. Go to repository Settings → Branches
+2. Add rule for `main` branch
+3. Check "Require status checks to pass before merging"
+4. Select required checks: `quality`, `integration`, `e2e`
+5. Check "Require branches to be up to date before merging"
+6. Check "Require a pull request before merging"
+7. Set "Require approvals" to 1
+
 ### Quality Gates (Phase 0.4+)
 
 **ENFORCED:** These checks must pass before merging. Run them locally before creating a PR.

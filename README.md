@@ -1,13 +1,15 @@
 # ZollPilot
 
+[![CI](https://github.com/PhillHH/zollpilot/workflows/CI/badge.svg)](https://github.com/PhillHH/zollpilot/actions/workflows/ci.yml)
+
 **A structured customs data management platform**
 
 ZollPilot helps organizations efficiently manage and navigate customs data with a modern, SEO-crawlable public portal and comprehensive admin backend.
 
 ## Project Status
 
-**Phase:** 0.1 - Repository initialization complete
-**Next:** Phase 0.2 - Next.js application setup
+**Phase:** 0.8 - CI/CD pipeline with comprehensive quality gates
+**Next:** Phase 1 - Core features implementation
 
 ## Features (Planned)
 

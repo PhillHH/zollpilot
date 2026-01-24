@@ -119,8 +119,8 @@ Examples:
 ### Linting & Formatting
 - ESLint enforced
 - Prettier enforced
-- Pre-commit hooks (Phase 0.8)
-- CI blocks non-compliant code
+- Pre-commit hooks (Phase 0.7+)
+- CI blocks non-compliant code (Phase 0.8+)
 
 ### Code Review
 - All PRs require review
@@ -200,16 +200,19 @@ TBD - Will be enforced via Prisma middleware and service layer (Phase 0.5+)
 pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm format
 ```
 
-### Pre-Merge Gates (Phase 0.8+ CI automation)
+### Pre-Merge Gates (Phase 0.8+ CI Automation - ENFORCED)
+
+**CI is a merge gate. All PRs must pass all checks before merging.**
+
 All PRs must pass:
-- ✅ TypeScript type checking (strict mode)
-- ✅ Linting (ESLint)
-- ✅ Code formatting (Prettier)
-- ✅ Unit tests (≥80% coverage ENFORCED)
-- ✅ Integration tests (TBD)
-- ✅ E2E tests (critical paths, TBD)
-- ✅ Documentation drift check (TBD)
-- ✅ Security audit (dependencies)
+- ✅ TypeScript type checking (strict mode) - **ENFORCED**
+- ✅ Linting (ESLint) - **ENFORCED**
+- ✅ Code formatting (Prettier) - **ENFORCED**
+- ✅ Unit tests (≥80% coverage) - **ENFORCED**
+- ✅ Integration tests (Postgres + Prisma) - **ENFORCED** (Phase 0.8+)
+- ✅ E2E tests (Playwright smoke tests) - **ENFORCED** (Phase 0.8+)
+- ⏳ Documentation drift check (Phase 0.10)
+- ⏳ Security audit (dependencies)
 
 ### Deployment Gates
 - All CI gates passing
