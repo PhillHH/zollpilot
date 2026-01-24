@@ -22,7 +22,7 @@
 
 ### Recommended
 - **nvm** or **fnm** for Node version management
-- **Docker** (for local database, planned)
+- **Docker** and **Docker Compose** for local database (Phase 0.3+)
 
 ### Editor
 - VS Code with recommended extensions (see `.vscode/extensions.json` - TBD)
@@ -40,16 +40,31 @@ nvm use
 # 3. Install dependencies
 pnpm install
 
-# 4. Run development server
+# 4. Setup environment variables
+cp .env.example .env
+
+# 5. Start the database
+pnpm db:up
+
+# 6. Run database migrations
+pnpm prisma:migrate
+
+# 7. Seed the database
+pnpm prisma:seed
+
+# 8. Verify database connection
+pnpm db:smoke
+
+# 9. Run development server
 pnpm dev
 
-# 5. Open browser
+# 10. Open browser
 # Navigate to http://localhost:3000
 ```
 
 The application will be running at `http://localhost:3000`.
 
-**Note:** Database setup and environment variables will be required starting in Phase 0.3.
+**First time setup:** Steps 4-8 set up your local database. After initial setup, you only need `pnpm db:up` and `pnpm dev`.
 
 ## Project Structure
 
@@ -67,11 +82,159 @@ zollpilot/
 
 ## Environment Variables
 
-TBD - Template will be provided with `.env.example`
+Copy the example environment file and adjust as needed:
+
+```bash
+cp .env.example .env
+```
+
+### Required Variables (Phase 0.3+)
+
+```bash
+# PostgreSQL Configuration
+POSTGRES_USER=zollpilot
+POSTGRES_PASSWORD=zollpilot_dev_pass
+POSTGRES_DB=zollpilot_dev
+
+# Prisma Database URL
+DATABASE_URL="postgresql://zollpilot:zollpilot_dev_pass@localhost:5432/zollpilot_dev?schema=public"
+```
+
+**Security Note:** Never commit `.env` files to version control. The `.env` file is already in `.gitignore`.
+
+### Optional Variables
+
+See `.env.example` for additional configuration options that will be added in future phases.
 
 ## Database Setup
 
-TBD - Prisma migrations and seeding
+ZollPilot uses **PostgreSQL** as the database and **Prisma** as the ORM.
+
+### Local Development Database
+
+The project uses Docker Compose to run a PostgreSQL database locally.
+
+#### Start the Database
+
+```bash
+pnpm db:up
+```
+
+This command:
+- Starts a PostgreSQL 16 container
+- Creates the database specified in your `.env` file
+- Exposes port 5432 on localhost
+- Persists data in a named Docker volume
+
+#### Stop the Database
+
+```bash
+pnpm db:down
+```
+
+#### Reset the Database (DESTRUCTIVE)
+
+```bash
+# WARNING: This deletes all data and volumes
+pnpm db:reset
+```
+
+### Prisma Workflow
+
+#### Generate Prisma Client
+
+After schema changes, regenerate the Prisma client:
+
+```bash
+pnpm prisma:generate
+```
+
+#### Run Migrations
+
+Apply database migrations:
+
+```bash
+pnpm prisma:migrate
+```
+
+This command:
+- Creates a new migration if schema changed
+- Applies pending migrations
+- Regenerates Prisma client
+
+**Note:** In development, this is interactive. It will prompt for a migration name.
+
+#### Seed the Database
+
+Populate the database with initial data:
+
+```bash
+pnpm prisma:seed
+```
+
+Default seed data:
+- 1 tenant: "ZollPilot Demo"
+- 1 admin user: admin@local.test (role: ADMIN)
+- 1 initial audit event
+
+#### Open Prisma Studio
+
+Explore and edit database data via GUI:
+
+```bash
+pnpm prisma:studio
+```
+
+Prisma Studio will open at `http://localhost:5555`.
+
+### Database Schema
+
+Current models (Phase 0.3):
+- **Tenant** - Multi-tenancy support
+- **User** - User accounts with role-based access
+- **AuditEvent** - Immutable audit trail for all admin actions
+
+See `apps/web/prisma/schema.prisma` for full schema.
+
+### Verify Database Connection
+
+Run the smoke test to verify database connectivity:
+
+```bash
+pnpm db:smoke
+```
+
+This tests:
+- Basic database connectivity
+- Prisma client functionality
+- Table accessibility
+
+### Troubleshooting Database Issues
+
+**Port 5432 already in use:**
+```bash
+# Check what's using port 5432
+lsof -i :5432  # macOS/Linux
+netstat -ano | findstr :5432  # Windows
+
+# Stop the local PostgreSQL if running
+# Or change the port in docker-compose.dev.yml
+```
+
+**Permission denied errors:**
+```bash
+# Ensure Docker daemon is running
+docker info
+
+# On Linux, add your user to docker group
+sudo usermod -aG docker $USER
+```
+
+**Prisma client not found:**
+```bash
+# Regenerate the client
+pnpm prisma:generate
+```
 
 ## Running the Application
 
