@@ -19,7 +19,15 @@
     "lint": "pnpm --filter @zollpilot/web lint",
     "format": "echo 'Format script - TBD'",
     "typecheck": "pnpm --filter @zollpilot/web typecheck",
-    "docs:check": "echo 'Doc drift check - TBD in Phase 0.10'"
+    "docs:check": "echo 'Doc drift check - TBD in Phase 0.10'",
+    "db:up": "docker compose -f docker-compose.dev.yml up -d",
+    "db:down": "docker compose -f docker-compose.dev.yml down",
+    "db:reset": "docker compose -f docker-compose.dev.yml down -v",
+    "db:smoke": "pnpm --filter @zollpilot/web db:smoke",
+    "prisma:generate": "pnpm --filter @zollpilot/web prisma:generate",
+    "prisma:migrate": "pnpm --filter @zollpilot/web prisma:migrate",
+    "prisma:seed": "pnpm --filter @zollpilot/web prisma:seed",
+    "prisma:studio": "pnpm --filter @zollpilot/web prisma:studio"
   },
   "keywords": [
     "customs",

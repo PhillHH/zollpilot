@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: zollpilot-postgres-dev
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-zollpilot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zollpilot_dev_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-zollpilot_dev}
+    volumes:
+      - zollpilot-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zollpilot} -d ${POSTGRES_DB:-zollpilot_dev}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  zollpilot-postgres-data:
+    name: zollpilot-postgres-data

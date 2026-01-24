@@ -7,7 +7,7 @@
 ## Inhaltsverzeichnis
 
 - [Einführung](#einführung)
-- [Aktueller Status (Phase 0.2)](#aktueller-status-phase-02)
+- [Aktueller Status (Phase 0.3)](#aktueller-status-phase-03)
 - [Admin-Zugang](#admin-zugang)
 - [Preiskonfiguration](#preiskonfiguration)
 - [Logging & Monitoring](#logging--monitoring)
@@ -26,7 +26,7 @@ Das ZollPilot Admin-Backend bietet Werkzeuge für:
 
 **KRITISCH:** Alle Admin-Aktionen erzeugen unveränderliche Audit-Events.
 
-## Aktueller Status (Phase 0.2)
+## Aktueller Status (Phase 0.3)
 
 ### Verfügbare Admin-Seite
 
@@ -39,6 +39,25 @@ Der Admin-Bereich ist über `/admin` erreichbar und zeigt derzeit eine Platzhalt
 **Zugriff:**
 - URL: `http://localhost:3000/admin`
 - Keine Authentifizierung erforderlich (wird in Phase 2 hinzugefügt)
+
+### Datenbank-Infrastruktur (Neu in Phase 0.3)
+
+Die Datenbank-Grundlage für alle Admin-Funktionen ist nun implementiert:
+
+**Implementierte Datenmodelle:**
+- **Tenant** - Mehrmandantenfähigkeit (Multi-Tenancy)
+- **User** - Benutzerkonten mit Rollenverwaltung
+- **AuditEvent** - Unveränderlicher Audit-Trail
+
+**Audit-Trail-Infrastruktur:**
+Alle zukünftigen Admin-Aktionen werden automatisch als Audit-Events erfasst mit:
+- Zeitstempel und Benutzer
+- Aktion und betroffene Ressource
+- Alte und neue Werte
+- IP-Adresse und User-Agent
+- Request-ID für Distributed Tracing
+
+**Technische Details:** Siehe `docs/ARCHITECTURE.md` für vollständige Datenbankschema-Dokumentation.
 
 ### Geplante Funktionen (Phase 2+)
 

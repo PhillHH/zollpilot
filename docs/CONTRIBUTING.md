@@ -75,6 +75,97 @@ chore: update dependencies
 7. Address review feedback
 8. Merge after approval and passing CI
 
+### Database Workflow (Phase 0.3+)
+
+When working with database changes:
+
+#### 1. Start the Database
+
+```bash
+pnpm db:up
+```
+
+#### 2. Make Schema Changes
+
+Edit `apps/web/prisma/schema.prisma`:
+
+```prisma
+model NewModel {
+  id        String   @id @default(uuid())
+  // ... fields
+}
+```
+
+#### 3. Create and Apply Migration
+
+```bash
+pnpm prisma:migrate
+```
+
+This will:
+- Prompt for a migration name (use descriptive names: `add-new-model`)
+- Generate a migration file in `prisma/migrations/`
+- Apply the migration to your local database
+- Regenerate Prisma client
+
+#### 4. Update Seed Script (if needed)
+
+If your changes require seed data updates, modify `prisma/seed.ts`.
+
+#### 5. Test Database Changes
+
+```bash
+# Verify database connectivity
+pnpm db:smoke
+
+# Run your tests
+pnpm test
+```
+
+#### 6. Include Migration in PR
+
+Commit the generated migration files:
+```bash
+git add apps/web/prisma/migrations/
+git add apps/web/prisma/schema.prisma
+git commit -m "feat: add new model to database schema"
+```
+
+#### Common Database Commands
+
+```bash
+# Start database
+pnpm db:up
+
+# Stop database (keeps data)
+pnpm db:down
+
+# Reset database (DESTRUCTIVE - deletes all data)
+pnpm db:reset
+
+# Generate Prisma client
+pnpm prisma:generate
+
+# Create and apply migration
+pnpm prisma:migrate
+
+# Seed database
+pnpm prisma:seed
+
+# Open Prisma Studio GUI
+pnpm prisma:studio
+
+# Run smoke test
+pnpm db:smoke
+```
+
+#### Database Testing Best Practices
+
+- Always test migrations locally before committing
+- Never modify existing migration files (create new ones)
+- Update seed data to match schema changes
+- Run `pnpm db:smoke` to verify changes
+
 ### PR Requirements (Gates)
 
 All PRs must pass:

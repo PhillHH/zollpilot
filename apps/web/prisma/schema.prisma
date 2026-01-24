@@ -1,0 +1,80 @@
+// Prisma schema for ZollPilot
+// Database: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tenant model for multi-tenancy support
+model Tenant {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users       User[]
+  auditEvents AuditEvent[]
+
+  @@map("tenants")
+}
+
+// User role enum
+enum UserRole {
+  ADMIN
+  SUPPORT_ADMIN
+  CONFIG_ADMIN
+  VIEWER
+  USER
+}
+
+// User model
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  email     String
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  auditEvents AuditEvent[]
+
+  // Unique constraint: email must be unique per tenant
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@map("users")
+}
+
+// AuditEvent model for immutable audit trail
+// CRITICAL: All admin actions must generate audit events
+model AuditEvent {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  actorUserId  String?  @db.Uuid
+  action       String // e.g., PRICING_UPDATE, USER_ROLE_CHANGE, CONFIG_CHANGE
+  entityType   String? // e.g., "User", "Pricing", "Config"
+  entityId     String? // ID of the affected entity
+  requestId    String // For distributed tracing
+  ipAddress    String?
+  userAgent    String?
+  metadata     Json? // Additional context (old/new values, etc.)
+  createdAt    DateTime @default(now())
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  actor  User?  @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  // Indexes for efficient querying
+  @@index([tenantId, createdAt])
+  @@index([requestId])
+  @@index([tenantId, action, createdAt])
+  @@index([actorUserId])
+  @@map("audit_events")
+}

@@ -17,7 +17,7 @@
 
 ZollPilot hilft Ihnen, Zolldaten strukturiert zu erfassen und zu verwalten.
 
-**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.2).
+**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.3). Datenpersistenz über PostgreSQL-Datenbank ist implementiert.
 
 ## Erste Schritte
 
@@ -64,12 +64,17 @@ Ein technischer Endpunkt zur Überprüfung des Systemstatus. Dieser wird haupts�
 
 ## Funktionen
 
-### Aktuelle Funktionen (Phase 0.2)
+### Aktuelle Funktionen (Phase 0.3)
 
 **Öffentliches Portal:**
 - Zugriff auf die Startseite mit Plattformübersicht
 - Navigation zwischen öffentlichen und Admin-Bereichen
 - Health-Check-Endpunkt für Systemüberwachung
+
+**Datenpersistenz:**
+- PostgreSQL-Datenbank für dauerhafte Datenspeicherung
+- Mehrmandantenfähigkeit (Multi-Tenancy) vorbereitet
+- Audit-Trail für Nachvollziehbarkeit aller Änderungen
 
 ### Geplante Funktionen (zukünftige Phasen)
 
@@ -97,7 +102,7 @@ A: ZollPilot ist eine Plattform zur strukturierten Erfassung und Verwaltung von 
 A: Für den Zugriff auf das öffentliche Portal ist derzeit kein Konto erforderlich. Die Benutzerverwaltung wird in einer späteren Phase implementiert.
 
 **F: In welcher Phase befindet sich die Entwicklung?**
-A: Derzeit in Phase 0.2 - Die grundlegende Anwendungsstruktur mit Next.js ist implementiert. Weitere Funktionen folgen in zukünftigen Phasen.
+A: Derzeit in Phase 0.3 - Die grundlegende Anwendungsstruktur mit Next.js und Datenpersistenz über PostgreSQL ist implementiert. Weitere Funktionen folgen in zukünftigen Phasen.
 
 ### Technische Fragen
 
@@ -120,11 +125,16 @@ Wenn Sie Unterstützung benötigen:
 - **Fehlerberichte:** Issues können über das GitHub-Repository gemeldet werden
 - **E-Mail-Support:** [Wird in späteren Phasen bereitgestellt]
 
-### Bekannte Einschränkungen (Phase 0.2)
+### Bekannte Einschränkungen (Phase 0.3)
 
-- Keine Benutzerauthentifizierung
-- Keine Datenbankintegration
+- Keine Benutzerauthentifizierung (geplant für Phase 2)
 - Begrenzte Funktionalität im Admin-Bereich
-- Keine Suchfunktion
+- Keine Suchfunktion für Zolldaten
+- Keine öffentlich verfügbaren Daten (kommt in Phase 0.4+)
+
+**Neu in Phase 0.3:**
+- ✅ Datenbankintegration implementiert (PostgreSQL + Prisma)
+- ✅ Mehrmandantenfähigkeit vorbereitet
+- ✅ Audit-Trail-Infrastruktur bereitgestellt
 
 Diese Einschränkungen werden in den kommenden Entwicklungsphasen behoben.

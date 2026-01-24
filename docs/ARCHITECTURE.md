@@ -70,6 +70,29 @@ apps/web/
 └── next.config.js            - Next.js configuration
 ```
 
+### Database Stack (Phase 0.3+)
+- **Database:** PostgreSQL 16
+- **ORM:** Prisma 6.x
+- **Migration Tool:** Prisma Migrate
+- **Local Development:** Docker Compose
+
+#### Database Configuration
+- **Development:** PostgreSQL in Docker container
+- **Connection Pooling:** Native Prisma connection pooling
+- **Query Logging:** Enabled in development, errors only in production
+
+#### Prisma Setup
+```
+apps/web/
+├── prisma/
+│   ├── schema.prisma         - Database schema definition
+│   └── seed.ts               - Seed script for initial data
+└── src/server/
+    └── db.ts                 - Prisma client singleton
+```
+
+**Singleton Pattern:** The Prisma client uses a singleton pattern to prevent multiple instances during Next.js hot reloading in development.
+
 ## Application Structure
 
 ```
@@ -82,7 +105,106 @@ packages/
 
 ## Data Model
 
-TBD - Prisma schema will be defined in later phases
+The database uses PostgreSQL with Prisma as the ORM. Schema is defined in `apps/web/prisma/schema.prisma`.
+
+### Core Models (Phase 0.3)
+
+#### Tenant
+Multi-tenancy support for data isolation.
+
+```prisma
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+**Purpose:** Isolate data between different organizations or environments.
+
+#### User
+User accounts with role-based access control.
+
+```prisma
+enum UserRole {
+  ADMIN          // Full system access
+  SUPPORT_ADMIN  // User support, read-only logs
+  CONFIG_ADMIN   // Pricing and configuration
+  VIEWER         // Read-only access
+  USER           // Standard user access
+}
+
+model User {
+  id        String   @id @default(uuid())
+  tenantId  String
+  email     String
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, email]) // Email unique per tenant
+  @@index([tenantId])
+}
+```
+
+**Key Features:**
+- Email must be unique per tenant
+- Role-based access control (RBAC)
+- Indexed for efficient queries
+
+#### AuditEvent
+Immutable audit trail for compliance and security.
+
+```prisma
+model AuditEvent {
+  id          String   @id @default(uuid())
+  tenantId    String
+  actorUserId String?
+  action      String   // e.g., PRICING_UPDATE, USER_ROLE_CHANGE
+  entityType  String?  // e.g., "User", "Pricing", "Config"
+  entityId    String?
+  requestId   String   // Distributed tracing
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?    // Old/new values, additional context
+  createdAt   DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+  @@index([requestId])
+  @@index([tenantId, action, createdAt])
+  @@index([actorUserId])
+}
+```
+
+**CRITICAL:** All admin actions must generate audit events. This is a hard requirement per POLICIES.md.
+
+**Key Features:**
+- Append-only (immutable)
+- Distributed tracing via requestId
+- Flexible metadata as JSON
+- Efficient querying via indexes
+
+### Database Relationships
+
+```
+Tenant (1) ──< (many) User
+Tenant (1) ──< (many) AuditEvent
+User (1) ──< (many) AuditEvent (as actor)
+```
+
+### Indexing Strategy
+
+Indexes are optimized for common query patterns:
+- **User lookup:** By tenant and email
+- **Audit trail:** By tenant, time range, and action type
+- **Distributed tracing:** By requestId
+
+### Future Models (Planned)
+
+- **PricingTier** - Pricing configuration
+- **CustomsData** - Core customs information
+- **SupportTicket** - Support management
 
 ## Security Architecture
 
