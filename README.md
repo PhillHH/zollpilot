@@ -8,7 +8,7 @@ ZollPilot helps organizations efficiently manage and navigate customs data with 
 
 ## Project Status
 
-**Phase:** 0.8 - CI/CD pipeline with comprehensive quality gates
+**Phase:** 0.9.1 - Branch protection documentation and merge gate enforcement
 **Next:** Phase 1 - Core features implementation
 
 ## Features (Planned)
@@ -177,6 +177,16 @@ We follow strict development practices:
 - Nothing undocumented
 - Code review required
 - CI gates enforced
+
+### Merge Requirements
+
+All pull requests must:
+- ✅ Pass all CI checks (quality, integration, e2e)
+- ✅ Have at least 1 approving review
+- ✅ Be up-to-date with base branch
+- ✅ Have all conversations resolved
+
+**Note:** When branch protection is configured (Phase 0.9.1+), these requirements are enforced automatically by GitHub. See [CONTRIBUTING.md](docs/CONTRIBUTING.md#branch-protection-setup-phase-091) for setup instructions.
 
 Read [CONTRIBUTING.md](docs/CONTRIBUTING.md) before submitting PRs.
 

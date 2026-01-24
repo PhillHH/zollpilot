@@ -200,19 +200,45 @@ TBD - Will be enforced via Prisma middleware and service layer (Phase 0.5+)
 pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm format
 ```
 
-### Pre-Merge Gates (Phase 0.8+ CI Automation - ENFORCED)
+### Pre-Merge Gates (Phase 0.8+ CI Automation)
 
-**CI is a merge gate. All PRs must pass all checks before merging.**
+**Phase 0.8:** CI pipeline runs automatically on all pull requests.
+**Phase 0.9.1:** CI becomes a merge gate via GitHub branch protection (requires manual configuration).
 
-All PRs must pass:
-- ✅ TypeScript type checking (strict mode) - **ENFORCED**
-- ✅ Linting (ESLint) - **ENFORCED**
-- ✅ Code formatting (Prettier) - **ENFORCED**
-- ✅ Unit tests (≥80% coverage) - **ENFORCED**
-- ✅ Integration tests (Postgres + Prisma) - **ENFORCED** (Phase 0.8+)
-- ✅ E2E tests (Playwright smoke tests) - **ENFORCED** (Phase 0.8+)
+#### CI Pipeline Status (Phase 0.8+)
+
+The following checks **run automatically** on every pull request:
+
+- ✅ TypeScript type checking (strict mode) - **RUNS IN CI**
+- ✅ Linting (ESLint) - **RUNS IN CI**
+- ✅ Code formatting (Prettier) - **RUNS IN CI**
+- ✅ Unit tests (≥80% coverage) - **RUNS IN CI**
+- ✅ Integration tests (Postgres + Prisma) - **RUNS IN CI**
+- ✅ E2E tests (Playwright smoke tests) - **RUNS IN CI**
 - ⏳ Documentation drift check (Phase 0.10)
 - ⏳ Security audit (dependencies)
+
+#### Enforcement Status (Phase 0.9.1)
+
+**IMPORTANT DISTINCTION:**
+- **"RUNS IN CI"** means the check executes automatically on PRs
+- **"ENFORCED AS MERGE GATE"** means GitHub blocks merging if the check fails
+
+**Current Enforcement Status:**
+
+With **branch protection configured** (manual GitHub setup required):
+- ✅ CI checks become **MERGE GATES** - PRs cannot merge if CI fails
+- ✅ PR approvals required - At least 1 reviewer must approve
+- ✅ Up-to-date branches required - Branch must be current with base
+- ✅ Direct commits blocked - All changes must go through PRs
+
+Without branch protection (default):
+- ⚠️ CI runs but **does not block merging**
+- ⚠️ Failed CI checks show warnings but allow merge
+- ⚠️ No approval required - Authors can merge their own PRs
+- ⚠️ Direct commits allowed - Can push directly to `main`
+
+**To enable enforcement:** Follow the Branch Protection Setup guide in `docs/CONTRIBUTING.md`
 
 ### Deployment Gates
 - All CI gates passing
@@ -263,10 +289,16 @@ All PRs must pass:
 ## Policy Enforcement
 
 These policies are enforced through:
-1. **Automated CI checks** (Phase 0.8)
-2. **Code review** (all PRs)
-3. **Pre-commit hooks** (Phase 0.8)
-4. **Regular audits** (quarterly)
+1. **Pre-commit hooks** (Phase 0.7+) - Local enforcement before commits
+2. **Automated CI checks** (Phase 0.8+) - Run on all pull requests
+3. **Branch protection** (Phase 0.9.1) - Blocks merging if CI fails (requires GitHub configuration)
+4. **Code review** (all PRs) - Human review and approval required
+5. **Regular audits** (quarterly) - Periodic compliance reviews
+
+**Enforcement Layers:**
+- **Local (pre-commit/pre-push):** Fast feedback, can be bypassed with `--no-verify`
+- **CI Pipeline (automated):** Runs on every PR, provides visibility but doesn't block by default
+- **Branch Protection (merge gate):** **Only enforcement layer that prevents merging** - must be configured in GitHub
 
 Violations may result in PR rejection or required rework.
 

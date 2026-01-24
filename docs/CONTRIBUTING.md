@@ -368,20 +368,154 @@ All three jobs must pass before a PR can be merged:
 - ✅ Integration Tests
 - ✅ E2E Tests
 
-**Branch Protection:**
-Main branch requires:
-- All status checks to pass
-- At least 1 approving review
-- Up-to-date with base branch
+**Note:** The CI pipeline runs automatically on pull requests, but it only becomes a **merge gate** when branch protection is configured in GitHub (see Branch Protection Setup below).
 
-To configure branch protection in GitHub:
-1. Go to repository Settings → Branches
-2. Add rule for `main` branch
-3. Check "Require status checks to pass before merging"
-4. Select required checks: `quality`, `integration`, `e2e`
-5. Check "Require branches to be up to date before merging"
-6. Check "Require a pull request before merging"
-7. Set "Require approvals" to 1
+## Branch Protection Setup (Phase 0.9.1)
+
+**IMPORTANT:** The CI pipeline (Phase 0.8+) runs on all pull requests, but it does **NOT automatically block merging** unless branch protection rules are configured in GitHub.
+
+### Why Branch Protection Matters
+
+Without branch protection:
+- ❌ PRs can be merged even if CI fails
+- ❌ PRs can be merged without code review
+- ❌ Direct commits to `main` are allowed
+- ❌ Force pushes can overwrite history
+
+With branch protection:
+- ✅ CI must pass before merging
+- ✅ Code review required
+- ✅ Direct commits to `main` blocked
+- ✅ Branch must be up-to-date with base
+- ✅ Force pushes prevented
+
+### Exact GitHub Configuration Steps
+
+**Prerequisites:**
+- Repository admin access
+- CI pipeline already configured (Phase 0.8+)
+
+**Steps:**
+
+1. **Navigate to Branch Protection Settings**
+   - Go to your repository on GitHub
+   - Click **Settings** (top right)
+   - Click **Branches** in the left sidebar
+   - Under "Branch protection rules", click **Add rule**
+
+2. **Configure Branch Name Pattern**
+   - In "Branch name pattern", enter: `main`
+   - This applies the rule to the main branch
+
+3. **Enable Pull Request Requirements**
+   - ✅ Check **Require a pull request before merging**
+   - Under this, configure:
+     - ✅ **Require approvals**: Set to `1` (minimum)
+     - ✅ **Dismiss stale pull request approvals when new commits are pushed**
+     - ⬜ **Require review from Code Owners** (optional, if CODEOWNERS file exists)
+     - ⬜ **Restrict who can dismiss pull request reviews** (optional)
+
+4. **Enable Status Check Requirements**
+   - ✅ Check **Require status checks to pass before merging**
+   - Under this, configure:
+     - ✅ **Require branches to be up to date before merging** (recommended)
+     - In the search box below "Status checks that are required", add:
+       - `quality` (enter and select)
+       - `integration` (enter and select)
+       - `e2e` (enter and select)
+   - **Note:** These status check names must match the job names in `.github/workflows/ci.yml`
+
+5. **Additional Recommended Settings**
+   - ✅ **Require conversation resolution before merging** (recommended)
+   - ✅ **Require signed commits** (optional, for enhanced security)
+   - ✅ **Require linear history** (optional, prevents merge commits)
+   - ✅ **Do not allow bypassing the above settings** (prevents admin bypass)
+   - ⬜ **Allow force pushes** (leave unchecked - prevents history rewriting)
+   - ⬜ **Allow deletions** (leave unchecked - prevents branch deletion)
+
+6. **Lock Down the Main Branch (Advanced)**
+   - ✅ **Restrict who can push to matching branches** (optional)
+     - Select specific users or teams allowed to push (usually none for `main`)
+   - This ensures ALL changes go through pull requests
+
+7. **Save Configuration**
+   - Click **Create** (or **Save changes** if editing existing rule)
+   - Branch protection is now active
+
+### Verification Checklist
+
+After configuring branch protection, verify it works:
+
+1. **Test CI Enforcement:**
+   ```bash
+   # Create a test branch with intentional failure
+   git checkout -b test/branch-protection
+
+   # Make a change that breaks linting (e.g., add extra spaces)
+   echo "const x  =  1" >> apps/web/src/test-file.ts
+
+   git add .
+   git commit -m "test: verify branch protection"
+   git push -u origin test/branch-protection
+   ```
+
+   - Create a PR from this branch to `main`
+   - Verify that GitHub shows **failing status checks**
+   - Verify that the **"Merge pull request"** button is disabled or shows warning
+   - Expected message: "Merging is blocked - Required status checks must pass"
+
+2. **Test PR Approval Requirement:**
+   - Create a PR with passing CI
+   - Without approval, try to merge
+   - Expected: "Merging is blocked - Requires 1 approving review"
+
+3. **Test Direct Push Protection:**
+   ```bash
+   git checkout main
+   git pull
+   echo "test" >> README.md
+   git commit -am "test: direct push"
+   git push
+   ```
+   - Expected error: `refusing to allow a personal access token to push to a protected branch`
+   - **Note:** This confirms direct pushes are blocked
+
+4. **Clean Up Test Branch:**
+   ```bash
+   git checkout main
+   git branch -D test/branch-protection
+   git push origin --delete test/branch-protection
+   ```
+
+### Current Protection Status
+
+**As of Phase 0.9.1:**
+- ✅ CI pipeline configured (quality, integration, e2e jobs)
+- ⏳ Branch protection rules (manual configuration required)
+
+**To enable enforcement:**
+Follow the exact steps above to configure branch protection in GitHub Settings.
+
+### Troubleshooting
+
+**Problem:** Status checks not appearing in the dropdown
+- **Cause:** The CI workflow hasn't run yet on a PR
+- **Solution:** Create a test PR first, wait for CI to run, then configure branch protection
+
+**Problem:** "Merge" button still enabled despite failing CI
+- **Cause:** Branch protection not configured or status check names don't match
+- **Solution:**
+  1. Verify rule is applied to `main` branch
+  2. Verify status check names match exactly: `quality`, `integration`, `e2e`
+  3. Check that "Require status checks to pass before merging" is checked
+
+**Problem:** Can't merge even with passing CI
+- **Cause:** Branch not up-to-date with base
+- **Solution:** Click "Update branch" button in PR or run `git pull origin main && git push`
+
+**Problem:** Admin can still bypass protections
+- **Cause:** "Do not allow bypassing the above settings" is unchecked
+- **Solution:** Enable this setting to enforce rules even for admins
 
 ### Quality Gates (Phase 0.4+)
 
