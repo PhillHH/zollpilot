@@ -1,0 +1,31 @@
+{
+  "name": "zollpilot",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ZollPilot - Structured customs data management platform",
+  "packageManager": "pnpm@9.15.2",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "echo 'Dev script - TBD in Phase 0.2'",
+    "build": "echo 'Build script - TBD in Phase 0.2'",
+    "start": "echo 'Start script - TBD in Phase 0.2'",
+    "test": "echo 'Test script - TBD'",
+    "test:unit": "echo 'Unit test script - TBD'",
+    "test:integration": "echo 'Integration test script - TBD'",
+    "test:e2e": "echo 'E2E test script - TBD'",
+    "lint": "echo 'Lint script - TBD'",
+    "format": "echo 'Format script - TBD'",
+    "typecheck": "echo 'Typecheck script - TBD'",
+    "docs:check": "echo 'Doc drift check - TBD in Phase 0.10'"
+  },
+  "keywords": [
+    "customs",
+    "zoll",
+    "data-management"
+  ],
+  "author": "",
+  "license": "UNLICENSED"
+}
