@@ -10,6 +10,12 @@
   },
   "scripts": {
     "dev": "pnpm --filter @zollpilot/web dev",
+    "db:up": "docker compose -f docker-compose.dev.yml up -d",
+    "db:down": "docker compose -f docker-compose.dev.yml down",
+    "db:reset": "docker compose -f docker-compose.dev.yml down -v",
+    "prisma:generate": "pnpm --filter @zollpilot/web prisma:generate",
+    "prisma:migrate": "pnpm --filter @zollpilot/web prisma:migrate",
+    "prisma:seed": "pnpm --filter @zollpilot/web prisma:seed",
     "build": "pnpm --filter @zollpilot/web build",
     "start": "pnpm --filter @zollpilot/web start",
     "test": "pnpm --filter @zollpilot/web test",

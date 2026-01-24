@@ -71,7 +71,14 @@ chore: update dependencies
    pnpm test
    pnpm docs:check
    ```
-6. Create PR with descriptive title and description
+6. **Database Changes:**
+   If you change the Prisma schema:
+   ```bash
+   pnpm prisma:migrate  # Generates migration file
+   pnpm prisma:generate # Updates client
+   pnpm prisma:seed     # Updates seed data
+   ```
+7. Create PR with descriptive title and description
 7. Address review feedback
 8. Merge after approval and passing CI
 

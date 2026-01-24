@@ -26,7 +26,9 @@ Das ZollPilot Admin-Backend bietet Werkzeuge für:
 
 **KRITISCH:** Alle Admin-Aktionen erzeugen unveränderliche Audit-Events.
 
-## Aktueller Status (Phase 0.2)
+## Aktueller Status (Phase 0.3)
+
+*Hinweis: Die Datenbank-Infrastruktur für die Speicherung von Konfigurationen und Logs wird derzeit vorbereitet.*
 
 ### Verfügbare Admin-Seite
 

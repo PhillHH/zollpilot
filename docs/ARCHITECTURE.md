@@ -82,7 +82,17 @@ packages/
 
 ## Data Model
 
-TBD - Prisma schema will be defined in later phases
+The application uses **Postgres** with **Prisma ORM**.
+
+### Core Models
+- **Tenant:** Represents a customer or organization.
+- **User:** A user belonging to a specific tenant.
+- **AuditEvent:** Immutable record of actions for compliance and security.
+
+### Why Prisma?
+- Type-safe database queries.
+- Automated migrations.
+- Simple developer workflow.
 
 ## Security Architecture
 

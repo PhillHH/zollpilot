@@ -22,7 +22,7 @@
 
 ### Recommended
 - **nvm** or **fnm** for Node version management
-- **Docker** (for local database, planned)
+- **Docker** (required for local database)
 
 ### Editor
 - VS Code with recommended extensions (see `.vscode/extensions.json` - TBD)
@@ -67,11 +67,39 @@ zollpilot/
 
 ## Environment Variables
 
-TBD - Template will be provided with `.env.example`
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+cp .env.example apps/web/.env
+```
+
+The defaults in `.env.example` are configured to work with the Docker-based Postgres setup.
 
 ## Database Setup
 
-TBD - Prisma migrations and seeding
+The project uses Postgres (via Docker) and Prisma.
+
+1. **Start the database:**
+   ```bash
+   pnpm db:up
+   ```
+
+2. **Run migrations:**
+   ```bash
+   pnpm prisma:migrate
+   ```
+
+3. **Seed the database:**
+   ```bash
+   pnpm prisma:seed
+   ```
+
+4. **Verify connection (Optional):**
+   ```bash
+   # Runs a simple SELECT 1
+   pnpm --filter @zollpilot/web ts-node --compiler-options '{"module":"CommonJS"}' scripts/db-check.ts
+   ```
 
 ## Running the Application
 
