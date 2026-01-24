@@ -17,7 +17,7 @@
 
 ZollPilot hilft Ihnen, Zolldaten strukturiert zu erfassen und zu verwalten.
 
-**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.4). Datenpersistenz über PostgreSQL-Datenbank ist implementiert.
+**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.6). Datenpersistenz über PostgreSQL-Datenbank ist implementiert.
 
 **Qualitätssicherung:** Die Zuverlässigkeit der Plattform ist durch automatisierte Tests und strenge Qualitätskontrollen gewährleistet.
 
@@ -127,16 +127,17 @@ Wenn Sie Unterstützung benötigen:
 - **Fehlerberichte:** Issues können über das GitHub-Repository gemeldet werden
 - **E-Mail-Support:** [Wird in späteren Phasen bereitgestellt]
 
-### Bekannte Einschränkungen (Phase 0.3)
+### Bekannte Einschränkungen (Phase 0.6)
 
 - Keine Benutzerauthentifizierung (geplant für Phase 2)
 - Begrenzte Funktionalität im Admin-Bereich
 - Keine Suchfunktion für Zolldaten
-- Keine öffentlich verfügbaren Daten (kommt in Phase 0.4+)
+- Keine öffentlich verfügbaren Daten (kommt in späteren Phasen)
 
-**Neu in Phase 0.3:**
+**Neu in Phase 0.5-0.6:**
 - ✅ Datenbankintegration implementiert (PostgreSQL + Prisma)
 - ✅ Mehrmandantenfähigkeit vorbereitet
 - ✅ Audit-Trail-Infrastruktur bereitgestellt
+- ✅ Umfangreiche automatisierte Tests (Unit, Integration, E2E)
 
 Diese Einschränkungen werden in den kommenden Entwicklungsphasen behoben.

@@ -8,12 +8,14 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
     globals: true,
-    // Exclude integration tests from unit test runs
+    // Exclude integration and E2E tests from unit test runs
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       '**/.git/**',
       '**/*.int.test.{ts,tsx}',
+      '**/*.e2e.spec.{ts,tsx}',
+      '**/e2e/**',
     ],
     coverage: {
       provider: 'v8',
@@ -23,13 +25,16 @@ export default defineConfig({
         'vitest.config.ts',
         'vitest.integration.config.ts',
         'vitest.setup.ts',
+        'playwright.config.ts',
         'next.config.js',
         '**/*.test.{ts,tsx}',
         '**/*.spec.{ts,tsx}',
         '**/*.int.test.{ts,tsx}',
+        '**/*.e2e.spec.{ts,tsx}',
         'prisma/',
         'scripts/',
         'test/',
+        'e2e/',
         '.next/',
       ],
       thresholds: {

@@ -420,14 +420,52 @@ const admin = await createUser(prisma, {
 pnpm test:integration
 ```
 
-#### 3. E2E Tests (Phase TBD)
+#### 3. E2E Tests (Phase 0.6+)
 
-**Purpose:** Full end-to-end user flows with Playwright
+**Purpose:** End-to-end user flows tested in real browser with Playwright
 
-**Status:** To be implemented in later phases
+**Characteristics:**
+- File naming: `*.e2e.spec.{ts,tsx}` (MUST include `.e2e.`)
+- Environment: Chromium browser (real browser automation)
+- No database required in Phase 0
+- Located in `apps/web/e2e/` directory
+- Tests full user workflows and UI interactions
 
+**Example:**
+```typescript
+// e2e/home.e2e.spec.ts
+import { test, expect } from '@playwright/test'
+
+test.describe('Home Page', () => {
+  test('should navigate to admin', async ({ page }) => {
+    await page.goto('/')
+
+    // Use role-based selectors for resilience
+    const adminLink = page.getByRole('link', { name: /admin/i })
+    await adminLink.click()
+
+    await expect(page).toHaveURL('/admin')
+    await expect(page.getByRole('heading', { name: /admin/i })).toBeVisible()
+  })
+})
+```
+
+**Run E2E tests:**
 ```bash
+# Local dev mode (fast)
 pnpm test:e2e
+
+# CI mode (build + start, stable)
+pnpm test:e2e:ci
+
+# Interactive UI mode
+pnpm test:e2e:ui
+```
+
+**Prerequisites:**
+```bash
+# First-time setup: install browsers
+npx playwright install chromium
 ```
 
 ### Test Structure
@@ -465,10 +503,12 @@ describe('Feature', () => {
 - API routes that use database
 
 **Use E2E Tests for:**
-- Full user workflows
-- Browser-specific behavior
-- Authentication flows
-- Cross-page interactions
+- Full user workflows (navigation, forms, multi-step processes)
+- Browser-specific behavior (rendering, responsive design)
+- Authentication flows (login, logout, session management)
+- Cross-page interactions and navigation
+- Critical user journeys (smoke tests)
+- UI interactions that can't be tested with unit/integration tests
 
 ### Coverage Requirements
 
