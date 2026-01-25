@@ -91,7 +91,7 @@ export async function createAuditEvent(
     requestId?: string
     ipAddress?: string
     userAgent?: string
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, any>
   } = {}
 ) {
   // Create tenant if not provided

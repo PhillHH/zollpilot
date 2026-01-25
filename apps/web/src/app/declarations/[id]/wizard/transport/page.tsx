@@ -78,6 +78,7 @@ export default function TransportPage({ params }: { params: { id: string } }) {
             <label className="block text-sm font-medium">Ausfuhrland (ISO) *</label>
             <input
               {...register('general.exportCountry')}
+              data-testid="input-general-exportCountry"
               placeholder="DE"
               className="mt-1 block w-full border border-gray-300 rounded p-2 uppercase"
               maxLength={2}
@@ -90,6 +91,7 @@ export default function TransportPage({ params }: { params: { id: string } }) {
             <label className="block text-sm font-medium">Bestimmungsland (ISO) *</label>
             <input
               {...register('general.destinationCountry')}
+              data-testid="input-general-destinationCountry"
               placeholder="US"
               className="mt-1 block w-full border border-gray-300 rounded p-2 uppercase"
               maxLength={2}
@@ -109,6 +111,7 @@ export default function TransportPage({ params }: { params: { id: string } }) {
             <label className="block text-sm font-medium">Verkehrszweig *</label>
             <select
               {...register('transport.mode')}
+              data-testid="select-transport-mode"
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             >
               <option value="">Bitte wählen...</option>
@@ -125,6 +128,7 @@ export default function TransportPage({ params }: { params: { id: string } }) {
             <label className="block text-sm font-medium">Kennzeichen / Identität *</label>
             <input
               {...register('transport.identity')}
+              data-testid="input-transport-identity"
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.transport?.identity && (
@@ -135,6 +139,7 @@ export default function TransportPage({ params }: { params: { id: string } }) {
             <label className="block text-sm font-medium">Staatszugehörigkeit (ISO)</label>
             <input
               {...register('transport.nationality')}
+              data-testid="input-transport-nationality"
               placeholder="DE"
               className="mt-1 block w-full border border-gray-300 rounded p-2 uppercase"
               maxLength={2}
@@ -154,6 +159,7 @@ export default function TransportPage({ params }: { params: { id: string } }) {
         <button
           type="submit"
           disabled={isSubmitting}
+          data-testid="btn-next"
           className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         >
           {isSubmitting ? 'Speichert...' : 'Weiter →'}

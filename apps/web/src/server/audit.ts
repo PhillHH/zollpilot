@@ -19,7 +19,7 @@
  *   });
  */
 
-import type { PrismaClient } from '@prisma/client'
+import { Prisma, type PrismaClient } from '@prisma/client'
 import { logger } from './logger'
 
 /**
@@ -43,7 +43,7 @@ export interface AuditEventData {
   /** User agent string (optional) */
   userAgent?: string | null
   /** Additional metadata (optional, must be JSON-serializable) */
-  metadata?: Record<string, unknown> | null
+  metadata?: Record<string, any> | null
 }
 
 /**
@@ -102,7 +102,7 @@ export async function logAuditEvent(
       requestId: data.requestId,
       ipAddress: data.ipAddress ?? null,
       userAgent: data.userAgent ?? null,
-      metadata: data.metadata ?? null,
+      metadata: data.metadata ?? Prisma.DbNull,
     },
   })
 

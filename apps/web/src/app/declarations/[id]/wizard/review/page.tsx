@@ -99,6 +99,7 @@ export default function ReviewPage({ params }: { params: { id: string } }) {
         <button
           onClick={onComplete}
           disabled={submitting}
+          data-testid="btn-complete"
           className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 disabled:opacity-50 font-bold"
         >
           {submitting ? 'Prüft & Speichert...' : 'Kostenpflichtig Abschließen'}

@@ -1,3 +1,18 @@
+// Validate essential environment variables
+if (process.env.NODE_ENV !== 'test') {
+  const requiredEnvs = ['DATABASE_URL'];
+  const missingEnvs = requiredEnvs.filter((key) => !process.env[key]);
+
+  if (missingEnvs.length > 0) {
+    console.error('❌ \x1b[31mCritical Error: Missing required environment variables:\x1b[0m');
+    missingEnvs.forEach((key) => {
+      console.error(`   - ${key}`);
+    });
+    console.error('\n\x1b[33mPlease ensure these are defined in your .env file or system environment.\x1b[0m\n');
+    process.exit(1);
+  }
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',

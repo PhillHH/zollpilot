@@ -9,7 +9,6 @@ const steps = [
 
 export default function WizardLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
   params: { id: string };

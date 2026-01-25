@@ -847,4 +847,25 @@ Check CI status on your PR:
 
 ## Troubleshooting
 
-TBD - Common issues and solutions
+### Startup Failures
+
+**"Critical Error: Missing required environment variables"**
+- The application (Next.js) enforces strict environment variable checks at startup.
+- Ensure your `.env` file contains `DATABASE_URL`.
+- Copy `.env.example` to `.env` if you haven't already.
+
+**"Connection refused" (Database)**
+- The database container might not be running or healthy.
+- Run `pnpm db:smoke` to verify connectivity.
+- Check docker logs: `docker logs zollpilot-postgres`.
+
+### Test Failures
+
+**E2E Tests failing (Timeout)**
+- Ensure the database is running (`pnpm db:up`).
+- Ensure dependencies are installed (`pnpm install`).
+- If running locally, ensure `chromium` is installed (`npx playwright install chromium`).
+
+**Integration Tests failing**
+- These tests require a running DB instance separate from your dev data (schema isolation).
+- Run `pnpm db:up` before running integration tests.

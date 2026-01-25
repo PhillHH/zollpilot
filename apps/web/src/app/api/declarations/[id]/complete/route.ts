@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDeclaration, completeDeclaration } from '@/server/declaration';
 import { declarationCompleteSchema } from '@/lib/validation/declaration';
+import { logger } from '@/server/logger';
 
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -20,7 +21,7 @@ export async function POST(
     if (!validationResult.success) {
       return NextResponse.json({
         error: 'Validation Failed',
-        details: validationResult.error.errors
+        details: (validationResult.error as any).errors
       }, { status: 400 });
     }
 
@@ -34,7 +35,7 @@ export async function POST(
     const completed = await completeDeclaration(params.id);
     return NextResponse.json(completed);
   } catch (error) {
-    console.error('Failed to complete declaration:', error);
+    logger.error({ scope: 'api.declarations.complete', msg: 'Failed to complete declaration', error: error as Error });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

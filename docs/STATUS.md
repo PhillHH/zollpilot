@@ -1,80 +1,43 @@
-# ZollPilot Projekt-Status
+# Status: Sprint 1 MVP Hardening (P1p5)
 
-**Stand:** 2026-01-25 | **Audit durchgeführt von:** Claude (Opus 4.5)
+## 🎯 Current Scope
+Release Candidate 1 for ZollPilot MVP. Focus is on stability, robustness, and reproducibility.
 
-## Executive Summary
+## ✅ Implemented Features (Clickable)
+All features are available via the Wizard flow:
 
-ZollPilot befindet sich in **Phase 1 (Sprint 1)** der Entwicklung. Der MVP-Scope (IAA Export Wizard) ist in Umsetzung.
+1.  **Dashboard** (`/declarations`)
+    - List of recent declarations
+    - Status overview
 
-## Aktueller Phasen-Status
+2.  **IAA Assistant Wizard**
+    - **Step 1: Start** (`/declarations/new`) -> Creates Draft
+    - **Step 2: Parties** (`.../wizard/parties`) -> Exporter, Recipient
+    - **Step 3: Transport** (`.../wizard/transport`) -> Mode, Identity, Countries
+    - **Step 4: Items** (`.../wizard/items`) -> Add/Remove Items (Commodity Code, Mass, Value)
+    - **Step 5: Review** (`.../wizard/review`) -> Summary & Validation
+    - **Step 6: Completion** (`/declarations/[id]/export`) -> Success Message & PDF Download
 
-| Phase | Beschreibung | Status |
-|-------|--------------|--------|
-| 0.1 - 0.9 | Infrastruktur & Setup | ✅ Abgeschlossen |
-| 1.0 | Core Features (IAA Export MVP) | 🚧 In Progress |
-| 2.0 | Admin Features + Auth | ⏳ Nicht gestartet |
+## 🚧 API Endpoints
+Base URL: `/api`
 
-## Komponenten-Status
+- `GET /declarations` - List all declarations
+- `POST /declarations` - Create new draft
+- `GET /declarations/[id]` - Fetch declaration details
+- `PATCH /declarations/[id]` - Update draft (Partial save allowed)
+- `POST /declarations/[id]/items` - Add item
+- `DELETE /declarations/[id]/items/[itemId]` - Remove item
+- `POST /declarations/[id]/complete` - Finalize and Validate (Strict)
+- `GET /declarations/[id]/pdf` - Generate Mock PDF
 
-### Apps
+## 🛑 Limitations (Known Gaps)
+- **No Real Customs Connection:** All submissions are internal only.
+- **Mock PDF:** The PDF is generated client-side/server-side with mock data, not a valid customs form.
+- **Single Tenant/User:** No authentication or role management active in UI (defaults to Admin).
+- **Tariff Logic:** No real tariff validation (mock 8-digit code check).
 
-| Komponente | Status | Details |
-|------------|--------|---------|
-| `apps/web` | Aktiv | Next.js 14 App-Shell + IAA Wizard |
-| Public Portal | Minimal | Startseite + Navigation |
-| IAA Wizard | **Beta** | Steps implementiert, klickbar, PDF-Export |
-| Admin Backend | Platzhalter | Nur Info-Seite |
-| API | Aktiv | Endpunkte für Declarations & Items |
-
-### Packages
-
-| Package | Status | Details |
-|---------|--------|---------|
-| `packages/shared` | Leer | Geplant für Types/Utilities |
-| `packages/config` | Leer | Geplant für Tool-Configs |
-
-### Infrastruktur
-
-| Komponente | Status | Details |
-|------------|--------|---------|
-| PostgreSQL | Aktiv | Docker Compose (Dev) |
-| Prisma ORM | Aktiv | Schema definiert (Declaration, Item) |
-| Migrationen | ✅ | Vorhanden für MVP-Schema |
-| CI/CD | Aktiv | 3 Jobs (quality, integration, e2e) |
-| Docker | ✅ | `docker-compose.yml` für Fullstack-Start |
-
-## Feature-Matrix (Sprint 1 MVP)
-
-### Implementiert
-
-| Feature | Status | Dateien |
-|---------|--------|---------|
-| Wizard Start | ✅ | `/declarations/new` |
-| Step: Beteiligte | ✅ | `/declarations/[id]/wizard/parties` |
-| Step: Transport | ✅ | `/declarations/[id]/wizard/transport` |
-| Step: Waren | ✅ | `/declarations/[id]/wizard/items` |
-| Step: Review | ✅ | `/declarations/[id]/wizard/review` |
-| PDF Export | ✅ | `/api/declarations/[id]/pdf` |
-| Entwurf-Speicherung | ✅ | Auto-Save via API PATCH |
-| Validierung | ✅ | Zod Schemas (Client & Server) |
-
-## Risiken
-
-### P0 - Kritisch
-
-| Risiko | Beschreibung | Mitigation |
-|--------|--------------|------------|
-| Keine Auth | Alle Endpunkte öffentlich | Phase 2: Auth implementieren |
-
-## Metriken
-
-| Metrik | Wert |
-|--------|------|
-| Endpunkte | 6+ |
-| DB-Modelle | 5 (Tenant, User, Audit, Decl, Item) |
-| Unit Tests | Validation Tests vorhanden |
-| E2E Tests | Wizard Flow vorhanden |
-
----
-
-**Letzte Aktualisierung:** 2026-01-25
+## 🔒 Security & Quality
+- **Validation:** Strict server-side Zod validation on completion.
+- **Logging:** Structured JSON logging (no PII).
+- **CI/CD:** Automated E2E and Unit tests blocking invalid merges.
+- **Environment:** Strict startup checks for missing ENV variables.

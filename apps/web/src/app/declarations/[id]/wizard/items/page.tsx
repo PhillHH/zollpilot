@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,24 +21,26 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ItemFormValues>({
-    resolver: zodResolver(itemDataSchema),
+    resolver: zodResolver(itemDataSchema) as any,
     defaultValues: {
-      currency: 'EUR',
+      invoiceAmount: {
+        currency: 'EUR',
+      },
     },
   });
 
-  const fetchItems = () => {
+  const fetchItems = useCallback(() => {
     fetch(`/api/declarations/${params.id}`)
       .then((res) => res.json())
       .then((decl) => {
         setItems(decl.items || []);
         setLoading(false);
       });
-  };
+  }, [params.id]);
 
   useEffect(() => {
     fetchItems();
-  }, [params.id]);
+  }, [fetchItems]);
 
   const onAddItem = async (data: ItemFormValues) => {
     try {
@@ -104,7 +106,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
           </div>
         )}
         {items.map((item, index) => (
-          <div key={item.id} className="border p-4 rounded bg-gray-50 flex justify-between items-center">
+          <div key={item.id} data-testid={`item-${index}`} className="border p-4 rounded bg-gray-50 flex justify-between items-center">
             <div>
               <div className="font-bold">
                 #{item.sequenceNumber} {item.data.description}
@@ -132,6 +134,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
               <label className="block text-sm font-medium">Warenbezeichnung *</label>
               <input
                 {...register('description')}
+                data-testid="input-item-description"
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
@@ -140,6 +143,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
               <label className="block text-sm font-medium">Warennummer (8-stellig) *</label>
               <input
                 {...register('commodityCode')}
+                data-testid="input-item-commodityCode"
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                 placeholder="12345678"
                 maxLength={8}
@@ -153,6 +157,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                   type="number"
                   step="0.01"
                   {...register('grossMass')}
+                  data-testid="input-item-grossMass"
                   className="mt-1 block w-full border border-gray-300 rounded p-2"
                 />
                 {errors.grossMass && <p className="text-red-500 text-sm">{errors.grossMass.message}</p>}
@@ -163,6 +168,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                   type="number"
                   step="0.01"
                   {...register('netMass')}
+                  data-testid="input-item-netMass"
                   className="mt-1 block w-full border border-gray-300 rounded p-2"
                 />
                 {errors.netMass && <p className="text-red-500 text-sm">{errors.netMass.message}</p>}
@@ -175,6 +181,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                   type="number"
                   step="0.01"
                   {...register('invoiceAmount.value')}
+                  data-testid="input-item-invoiceAmount-value"
                   className="mt-1 block w-full border border-gray-300 rounded p-2"
                 />
                 {errors.invoiceAmount?.value && <p className="text-red-500 text-sm">{errors.invoiceAmount.value.message}</p>}
@@ -183,6 +190,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                 <label className="block text-sm font-medium">Währung *</label>
                 <input
                   {...register('invoiceAmount.currency')}
+                  data-testid="input-item-invoiceAmount-currency"
                   className="mt-1 block w-full border border-gray-300 rounded p-2 uppercase"
                   maxLength={3}
                 />
@@ -201,6 +209,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
               <button
                 type="submit"
                 disabled={isSubmitting}
+                data-testid="btn-add-item-submit"
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
               >
                 Hinzufügen
@@ -211,6 +220,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
       ) : (
         <button
           onClick={() => setIsAdding(true)}
+          data-testid="btn-add-item"
           className="w-full border-2 border-dashed border-gray-300 p-4 rounded text-gray-500 hover:border-blue-500 hover:text-blue-500"
         >
           + Position hinzufügen
@@ -227,6 +237,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
         </button>
         <button
           onClick={onNext}
+          data-testid="btn-next"
           className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
         >
           Zum Abschluss →

@@ -66,6 +66,7 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
             <label className="block text-sm font-medium">Name *</label>
             <input
               {...register('exporter.name')}
+              data-testid="input-exporter-name"
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.exporter?.name && (
@@ -76,6 +77,7 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
             <label className="block text-sm font-medium">Strasse *</label>
             <input
               {...register('exporter.address.street')}
+              data-testid="input-exporter-street"
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.exporter?.address?.street && (
@@ -87,6 +89,7 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
               <label className="block text-sm font-medium">Stadt *</label>
               <input
                 {...register('exporter.address.city')}
+                data-testid="input-exporter-city"
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               {errors.exporter?.address?.city && (
@@ -97,6 +100,7 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
               <label className="block text-sm font-medium">Land (ISO) *</label>
               <input
                 {...register('exporter.address.country')}
+                data-testid="input-exporter-country"
                 placeholder="DE"
                 className="mt-1 block w-full border border-gray-300 rounded p-2 uppercase"
                 maxLength={2}
@@ -117,6 +121,7 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
             <label className="block text-sm font-medium">Name *</label>
             <input
               {...register('recipient.name')}
+              data-testid="input-recipient-name"
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.recipient?.name && (
@@ -127,6 +132,7 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
             <label className="block text-sm font-medium">Strasse *</label>
             <input
               {...register('recipient.address.street')}
+              data-testid="input-recipient-street"
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.recipient?.address?.street && (
@@ -138,6 +144,7 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
               <label className="block text-sm font-medium">Stadt *</label>
               <input
                 {...register('recipient.address.city')}
+                data-testid="input-recipient-city"
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               {errors.recipient?.address?.city && (
@@ -148,6 +155,7 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
               <label className="block text-sm font-medium">Land (ISO) *</label>
               <input
                 {...register('recipient.address.country')}
+                data-testid="input-recipient-country"
                 placeholder="US"
                 className="mt-1 block w-full border border-gray-300 rounded p-2 uppercase"
                 maxLength={2}
@@ -164,6 +172,7 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
         <button
           type="submit"
           disabled={isSubmitting}
+          data-testid="btn-next"
           className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         >
           {isSubmitting ? 'Speichert...' : 'Weiter →'}

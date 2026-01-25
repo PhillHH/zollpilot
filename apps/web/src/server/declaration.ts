@@ -1,5 +1,5 @@
 import { prisma } from './db';
-import { DeclarationStatus, ProcedureType, Prisma } from '@prisma/client';
+import { DeclarationStatus, ProcedureType } from '@prisma/client';
 
 const DEFAULT_TENANT_ID = '00000000-0000-0000-0000-000000000001';
 const DEFAULT_USER_EMAIL = 'admin@local.test';

@@ -1,11 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 export default function ExportPage({ params }: { params: { id: string } }) {
-  const router = useRouter();
-
   return (
     <div className="container mx-auto p-8 max-w-2xl text-center">
       <div className="bg-green-50 border border-green-200 rounded p-8 mb-8">
@@ -20,6 +17,7 @@ export default function ExportPage({ params }: { params: { id: string } }) {
         <a
           href={`/api/declarations/${params.id}/pdf`}
           target="_blank"
+          data-testid="link-pdf-download"
           className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 flex items-center font-bold"
         >
           📄 PDF Herunterladen

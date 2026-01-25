@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDeclaration } from '@/server/declaration';
 import { jsPDF } from 'jspdf';
+import { logger } from '@/server/logger';
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -56,7 +57,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Failed to generate PDF:', error);
+    logger.error({ scope: 'api.declarations.pdf', msg: 'Failed to generate PDF', error: error as Error });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

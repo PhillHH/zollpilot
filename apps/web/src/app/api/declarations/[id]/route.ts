@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDeclaration, updateDeclaration } from '@/server/declaration';
+import { logger } from '@/server/logger';
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -12,7 +13,7 @@ export async function GET(
     }
     return NextResponse.json(declaration);
   } catch (error) {
-    console.error('Failed to fetch declaration:', error);
+    logger.error({ scope: 'api.declarations.id', msg: 'Failed to fetch declaration', error: error as Error });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -28,7 +29,7 @@ export async function PATCH(
     const declaration = await updateDeclaration(params.id, data, step);
     return NextResponse.json(declaration);
   } catch (error) {
-    console.error('Failed to update declaration:', error);
+    logger.error({ scope: 'api.declarations.id', msg: 'Failed to update declaration', error: error as Error });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

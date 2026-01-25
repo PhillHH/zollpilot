@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createDraft } from '@/server/declaration';
 import { prisma } from '@/server/db';
+import { logger } from '@/server/logger';
 
 const DEFAULT_TENANT_ID = '00000000-0000-0000-0000-000000000001';
 
@@ -9,7 +10,7 @@ export async function POST() {
     const declaration = await createDraft();
     return NextResponse.json(declaration);
   } catch (error) {
-    console.error('Failed to create declaration:', error);
+    logger.error({ scope: 'api.declarations', msg: 'Failed to create declaration', error: error as Error });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -22,7 +23,7 @@ export async function GET() {
     });
     return NextResponse.json(declarations);
   } catch (error) {
-    console.error('Failed to list declarations:', error);
+    logger.error({ scope: 'api.declarations', msg: 'Failed to list declarations', error: error as Error });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
