@@ -208,7 +208,23 @@ Indexes are optimized for common query patterns:
 
 ## Security Architecture
 
-TBD - See SECURITY.md for current policies
+### Authentication (Phase 2.1)
+
+ZollPilot uses **NextAuth.js (Auth.js) v5** for secure, standard-compliant authentication.
+
+**Key Components:**
+- **Provider:** Credentials (Email/Password)
+- **Session:** JWT-based with server-side database validation (hybrid approach).
+- **Persistence:** `@auth/prisma-adapter` stores Users, Accounts, and Sessions (for future OAuth).
+- **Hashing:** `bcrypt` (10 rounds) for secure password storage.
+
+**Flow:**
+1. **Sign Up:** User enters Email/Password -> Server Action -> Creates Tenant ("My Workspace") -> Creates User (hashed password) -> Assigns User to Tenant.
+2. **Login:** User enters credentials -> `authorize` callback verifies hash -> Issues JWT.
+3. **Session Check:** Middleware/API reads JWT -> Validates User existence in DB (Revocation Check).
+4. **Protection:** Middleware blocks access to `/dashboard` and `/declarations` for unauthenticated users.
+
+See `docs/security/SECURITY_BASELINE.md` for detailed security policies.
 
 ## Deployment Architecture
 

@@ -31,18 +31,28 @@
 
 ### Aktueller Status
 
-**NICHT IMPLEMENTIERT**
+**IMPLEMENTIERT (Phase 2.1)**
 
-Die Anwendung hat derzeit keine Authentifizierung. Alle Seiten und API-Endpunkte sind öffentlich zugänglich.
+Die Anwendung nutzt **NextAuth.js (Auth.js) v5** für die Authentifizierung.
 
-### Geplant (Phase 2)
+### Architektur
 
-| Feature | Beschreibung |
-|---------|--------------|
-| Session-Auth | Cookie-basierte Sessions |
-| MFA | Multi-Faktor-Authentifizierung |
-| Session-Timeout | Automatische Abmeldung |
-| Password Policy | Starke Passwort-Anforderungen |
+- **Provider:** Credentials (E-Mail/Passwort)
+- **Hashing:** `bcrypt` (Salted Rounds: 10)
+- **Session Strategy:**
+  - **JWT (JSON Web Token)** wird primär genutzt (technische Anforderung des Credentials Providers in NextAuth v5).
+  - **Database Validation:** Bei jedem Session-Zugriff wird der User gegen die Datenbank geprüft, um Revocation (Sperrung) zu ermöglichen.
+- **Adapter:** `@auth/prisma-adapter` ist integriert (vorbereitet für OAuth und Session-Persistenz).
+- **Tenancy:** Bei Registrierung wird automatisch ein "My Workspace" Tenant angelegt.
+
+### Features
+
+| Feature | Beschreibung | Status |
+|---------|--------------|--------|
+| Register | E-Mail/Passwort + Auto-Tenant | ✅ Impl. |
+| Login | Credentials Check via bcrypt | ✅ Impl. |
+| Logout | Session Termination | ✅ Impl. |
+| Protected Routes | Middleware + Server-Side Checks | ✅ Impl. |
 
 ### Risiko
 

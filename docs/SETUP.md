@@ -105,6 +105,10 @@ POSTGRES_DB=zollpilot_dev
 
 # Prisma Database URL
 DATABASE_URL="postgresql://zollpilot:zollpilot_dev_pass@localhost:5432/zollpilot_dev?schema=public"
+
+# Auth.js Configuration (Phase 2.1)
+AUTH_SECRET="your_generated_secret"
+AUTH_URL="http://localhost:3000"
 ```
 
 **Security Note:** Never commit `.env` files to version control. The `.env` file is already in `.gitignore`.
