@@ -19,10 +19,10 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
 
   /**

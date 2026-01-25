@@ -1,19 +1,20 @@
-'use client';
+'use client'
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { itemDataSchema } from '@/lib/validation/declaration';
-import { z } from 'zod';
+import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { itemDataSchema } from '@/lib/validation/declaration'
+import { clientLogger } from '@/lib/client-logger'
+import { z } from 'zod'
 
-type ItemFormValues = z.infer<typeof itemDataSchema>;
+type ItemFormValues = z.infer<typeof itemDataSchema>
 
 export default function ItemsPage({ params }: { params: { id: string } }) {
-  const router = useRouter();
-  const [items, setItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isAdding, setIsAdding] = useState(false);
+  const router = useRouter()
+  const [items, setItems] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [isAdding, setIsAdding] = useState(false)
 
   const {
     register,
@@ -27,20 +28,20 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
         currency: 'EUR',
       },
     },
-  });
+  })
 
   const fetchItems = useCallback(() => {
     fetch(`/api/declarations/${params.id}`)
       .then((res) => res.json())
       .then((decl) => {
-        setItems(decl.items || []);
-        setLoading(false);
-      });
-  }, [params.id]);
+        setItems(decl.items || [])
+        setLoading(false)
+      })
+  }, [params.id])
 
   useEffect(() => {
-    fetchItems();
-  }, [fetchItems]);
+    fetchItems()
+  }, [fetchItems])
 
   const onAddItem = async (data: ItemFormValues) => {
     try {
@@ -48,36 +49,45 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
-      });
+      })
 
       if (res.ok) {
-        setIsAdding(false);
-        reset();
-        fetchItems(); // Refresh list
+        setIsAdding(false)
+        reset()
+        fetchItems() // Refresh list
       }
     } catch (error) {
-      console.error(error);
+      clientLogger.error('Failed to add item', {
+        error,
+        context: 'wizard.items.add',
+      })
     }
-  };
+  }
 
   const onRemoveItem = async (itemId: string) => {
-    if (!confirm('Position wirklich löschen?')) return;
+    if (!confirm('Position wirklich löschen?')) return
     try {
-      const res = await fetch(`/api/declarations/${params.id}/items/${itemId}`, {
-        method: 'DELETE',
-      });
+      const res = await fetch(
+        `/api/declarations/${params.id}/items/${itemId}`,
+        {
+          method: 'DELETE',
+        }
+      )
       if (res.ok) {
-        fetchItems();
+        fetchItems()
       }
     } catch (error) {
-      console.error(error);
+      clientLogger.error('Failed to remove item', {
+        error,
+        context: 'wizard.items.remove',
+      })
     }
-  };
+  }
 
   const onNext = async () => {
     if (items.length === 0) {
-      alert('Bitte erfassen Sie mindestens eine Warenposition.');
-      return;
+      alert('Bitte erfassen Sie mindestens eine Warenposition.')
+      return
     }
 
     try {
@@ -85,14 +95,17 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ step: 4 }),
-      });
-      router.push(`/declarations/${params.id}/wizard/review`);
+      })
+      router.push(`/declarations/${params.id}/wizard/review`)
     } catch (error) {
-      console.error(error);
+      clientLogger.error('Failed to proceed to review', {
+        error,
+        context: 'wizard.items.next',
+      })
     }
-  };
+  }
 
-  if (loading) return <div>Laden...</div>;
+  if (loading) return <div>Laden...</div>
 
   return (
     <div className="space-y-6">
@@ -106,13 +119,19 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
           </div>
         )}
         {items.map((item, index) => (
-          <div key={item.id} data-testid={`item-${index}`} className="border p-4 rounded bg-gray-50 flex justify-between items-center">
+          <div
+            key={item.id}
+            data-testid={`item-${index}`}
+            className="border p-4 rounded bg-gray-50 flex justify-between items-center"
+          >
             <div>
               <div className="font-bold">
                 #{item.sequenceNumber} {item.data.description}
               </div>
               <div className="text-sm text-gray-600">
-                Warennr: {item.data.commodityCode} | {item.data.grossMass}kg | {item.data.invoiceAmount.value} {item.data.invoiceAmount.currency}
+                Warennr: {item.data.commodityCode} | {item.data.grossMass}kg |{' '}
+                {item.data.invoiceAmount.value}{' '}
+                {item.data.invoiceAmount.currency}
               </div>
             </div>
             <button
@@ -131,16 +150,24 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
           <h3 className="font-bold mb-4">Neue Position</h3>
           <form onSubmit={handleSubmit(onAddItem)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">Warenbezeichnung *</label>
+              <label className="block text-sm font-medium">
+                Warenbezeichnung *
+              </label>
               <input
                 {...register('description')}
                 data-testid="input-item-description"
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
-              {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+              {errors.description && (
+                <p className="text-red-500 text-sm">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
             <div>
-              <label className="block text-sm font-medium">Warennummer (8-stellig) *</label>
+              <label className="block text-sm font-medium">
+                Warennummer (8-stellig) *
+              </label>
               <input
                 {...register('commodityCode')}
                 data-testid="input-item-commodityCode"
@@ -148,11 +175,17 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                 placeholder="12345678"
                 maxLength={8}
               />
-              {errors.commodityCode && <p className="text-red-500 text-sm">{errors.commodityCode.message}</p>}
+              {errors.commodityCode && (
+                <p className="text-red-500 text-sm">
+                  {errors.commodityCode.message}
+                </p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium">Rohmasse (kg) *</label>
+                <label className="block text-sm font-medium">
+                  Rohmasse (kg) *
+                </label>
                 <input
                   type="number"
                   step="0.01"
@@ -160,10 +193,16 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                   data-testid="input-item-grossMass"
                   className="mt-1 block w-full border border-gray-300 rounded p-2"
                 />
-                {errors.grossMass && <p className="text-red-500 text-sm">{errors.grossMass.message}</p>}
+                {errors.grossMass && (
+                  <p className="text-red-500 text-sm">
+                    {errors.grossMass.message}
+                  </p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium">Eigenmasse (kg) *</label>
+                <label className="block text-sm font-medium">
+                  Eigenmasse (kg) *
+                </label>
                 <input
                   type="number"
                   step="0.01"
@@ -171,12 +210,18 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                   data-testid="input-item-netMass"
                   className="mt-1 block w-full border border-gray-300 rounded p-2"
                 />
-                {errors.netMass && <p className="text-red-500 text-sm">{errors.netMass.message}</p>}
+                {errors.netMass && (
+                  <p className="text-red-500 text-sm">
+                    {errors.netMass.message}
+                  </p>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium">Rechnungsbetrag *</label>
+                <label className="block text-sm font-medium">
+                  Rechnungsbetrag *
+                </label>
                 <input
                   type="number"
                   step="0.01"
@@ -184,7 +229,11 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                   data-testid="input-item-invoiceAmount-value"
                   className="mt-1 block w-full border border-gray-300 rounded p-2"
                 />
-                {errors.invoiceAmount?.value && <p className="text-red-500 text-sm">{errors.invoiceAmount.value.message}</p>}
+                {errors.invoiceAmount?.value && (
+                  <p className="text-red-500 text-sm">
+                    {errors.invoiceAmount.value.message}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium">Währung *</label>
@@ -194,7 +243,11 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                   className="mt-1 block w-full border border-gray-300 rounded p-2 uppercase"
                   maxLength={3}
                 />
-                {errors.invoiceAmount?.currency && <p className="text-red-500 text-sm">{errors.invoiceAmount.currency.message}</p>}
+                {errors.invoiceAmount?.currency && (
+                  <p className="text-red-500 text-sm">
+                    {errors.invoiceAmount.currency.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -244,5 +297,5 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
         </button>
       </div>
     </div>
-  );
+  )
 }

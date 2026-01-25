@@ -1,22 +1,23 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { transportSchema, generalSchema } from '@/lib/validation/declaration';
-import { z } from 'zod';
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { transportSchema, generalSchema } from '@/lib/validation/declaration'
+import { clientLogger } from '@/lib/client-logger'
+import { z } from 'zod'
 
 const stepSchema = z.object({
   transport: transportSchema,
   general: generalSchema,
-});
+})
 
-type FormValues = z.infer<typeof stepSchema>;
+type FormValues = z.infer<typeof stepSchema>
 
 export default function TransportPage({ params }: { params: { id: string } }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
 
   const {
     register,
@@ -25,7 +26,7 @@ export default function TransportPage({ params }: { params: { id: string } }) {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(stepSchema),
-  });
+  })
 
   useEffect(() => {
     fetch(`/api/declarations/${params.id}`)
@@ -36,11 +37,11 @@ export default function TransportPage({ params }: { params: { id: string } }) {
           reset({
             transport: decl.data.transport,
             general: decl.data.general,
-          });
+          })
         }
-        setLoading(false);
-      });
-  }, [params.id, reset]);
+        setLoading(false)
+      })
+  }, [params.id, reset])
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -54,28 +55,35 @@ export default function TransportPage({ params }: { params: { id: string } }) {
           },
           step: 3,
         }),
-      });
+      })
 
       if (res.ok) {
-        router.push(`/declarations/${params.id}/wizard/items`);
+        router.push(`/declarations/${params.id}/wizard/items`)
       }
     } catch (error) {
-      console.error(error);
+      clientLogger.error('Failed to update transport data', {
+        error,
+        context: 'wizard.transport',
+      })
     }
-  };
+  }
 
-  if (loading) return <div>Laden...</div>;
+  if (loading) return <div>Laden...</div>
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <h2 className="text-xl font-bold border-b pb-4">Transport & Allgemeines</h2>
+      <h2 className="text-xl font-bold border-b pb-4">
+        Transport & Allgemeines
+      </h2>
 
       {/* General */}
       <div className="space-y-4">
         <h3 className="font-semibold text-gray-700">Allgemein</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium">Ausfuhrland (ISO) *</label>
+            <label className="block text-sm font-medium">
+              Ausfuhrland (ISO) *
+            </label>
             <input
               {...register('general.exportCountry')}
               data-testid="input-general-exportCountry"
@@ -84,11 +92,15 @@ export default function TransportPage({ params }: { params: { id: string } }) {
               maxLength={2}
             />
             {errors.general?.exportCountry && (
-              <p className="text-red-500 text-sm">{errors.general.exportCountry.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.general.exportCountry.message}
+              </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium">Bestimmungsland (ISO) *</label>
+            <label className="block text-sm font-medium">
+              Bestimmungsland (ISO) *
+            </label>
             <input
               {...register('general.destinationCountry')}
               data-testid="input-general-destinationCountry"
@@ -97,7 +109,9 @@ export default function TransportPage({ params }: { params: { id: string } }) {
               maxLength={2}
             />
             {errors.general?.destinationCountry && (
-              <p className="text-red-500 text-sm">{errors.general.destinationCountry.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.general.destinationCountry.message}
+              </p>
             )}
           </div>
         </div>
@@ -121,22 +135,30 @@ export default function TransportPage({ params }: { params: { id: string } }) {
               <option value="4">4 - Luftverkehr</option>
             </select>
             {errors.transport?.mode && (
-              <p className="text-red-500 text-sm">{errors.transport.mode.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.transport.mode.message}
+              </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium">Kennzeichen / Identität *</label>
+            <label className="block text-sm font-medium">
+              Kennzeichen / Identität *
+            </label>
             <input
               {...register('transport.identity')}
               data-testid="input-transport-identity"
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.transport?.identity && (
-              <p className="text-red-500 text-sm">{errors.transport.identity.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.transport.identity.message}
+              </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium">Staatszugehörigkeit (ISO)</label>
+            <label className="block text-sm font-medium">
+              Staatszugehörigkeit (ISO)
+            </label>
             <input
               {...register('transport.nationality')}
               data-testid="input-transport-nationality"
@@ -166,5 +188,5 @@ export default function TransportPage({ params }: { params: { id: string } }) {
         </button>
       </div>
     </form>
-  );
+  )
 }
