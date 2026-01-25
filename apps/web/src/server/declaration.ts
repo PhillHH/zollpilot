@@ -1,24 +1,11 @@
 import { prisma } from './db';
 import { DeclarationStatus, ProcedureType } from '@prisma/client';
 
-const DEFAULT_TENANT_ID = '00000000-0000-0000-0000-000000000001';
-const DEFAULT_USER_EMAIL = 'admin@local.test';
-
-async function getDefaultUser() {
-  const user = await prisma.user.findFirst({
-    where: { email: DEFAULT_USER_EMAIL, tenantId: DEFAULT_TENANT_ID },
-  });
-  if (!user) throw new Error('Default user not found. Please run seed.');
-  return user;
-}
-
-export async function createDraft() {
-  const user = await getDefaultUser();
-
+export async function createDraft(tenantId: string, userId: string) {
   return prisma.declaration.create({
     data: {
-      tenantId: DEFAULT_TENANT_ID,
-      userId: user.id,
+      tenantId,
+      userId,
       status: DeclarationStatus.DRAFT,
       procedure: ProcedureType.EXPORT,
       step: 1,
