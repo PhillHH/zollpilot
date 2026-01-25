@@ -133,31 +133,60 @@ Examples:
 ### Admin Action Audit
 **MANDATORY:** Every admin action must generate an immutable audit event.
 
-### Audit Event Requirements
-- Timestamp (ISO 8601)
-- User ID and username
-- Action type
-- Resource ID and type
-- Previous and new values (where applicable)
-- IP address
-- User agent
-- Request ID (for tracing)
+### Audit Event Requirements (Phase 0.12)
 
-### Audit Event Types (examples)
-- `PRICING_UPDATE`
-- `USER_ROLE_CHANGE`
-- `CONFIG_UPDATE`
-- `USER_DELETE`
-- `SUPPORT_ACCESS`
+**Required Fields:**
+- `tenantId` (UUID) - Multi-tenant isolation
+- `action` (string) - Action type from AUDIT_ACTIONS constant
+- `requestId` (string) - Request correlation ID (from x-request-id header)
+- `createdAt` (timestamp) - Auto-generated, immutable
+
+**Optional Fields:**
+- `actorUserId` (UUID) - User who performed action (null for system actions)
+- `entityType` (string) - Type of entity affected (e.g., "User", "Shipment")
+- `entityId` (string) - ID of entity affected
+- `ipAddress` (string) - Client IP address
+- `userAgent` (string) - Client user agent
+- `metadata` (JSON, max 10KB) - Additional context
+
+### Standard Audit Actions
+
+Use constants from `apps/web/src/server/audit.ts`:
+- `SYSTEM_SEED` - Database initialization
+- `USER_CREATED`, `USER_UPDATED`, `USER_DELETED` - User management
+- `PRICING_UPDATED`, `PRICING_EXPORTED` - Pricing operations
+- Add new actions as needed to the `AUDIT_ACTIONS` constant
 
 ### Audit Log Storage
-- Immutable (append-only)
-- Encrypted at rest
-- Retention: TBD (minimum 2 years recommended)
-- Regular backups
+- **Immutable** - NEVER update or delete audit events (append-only)
+- **Database-backed** - Stored in `audit_events` table via Prisma
+- **Encrypted at rest** - Database-level encryption
+- **Retention:** Minimum 2 years recommended for compliance
+- **Regular backups** - Included in database backup strategy
 
-### Implementation
-TBD - Will be enforced via Prisma middleware and service layer (Phase 0.5+)
+### Implementation (Phase 0.12)
+
+**Helper Function:**
+```typescript
+import { logAuditEvent, AUDIT_ACTIONS } from '@/server/audit';
+
+await logAuditEvent(prisma, {
+  tenantId: 'tenant-123',
+  actorUserId: 'user-456',
+  action: AUDIT_ACTIONS.USER_CREATED,
+  entityType: 'User',
+  entityId: 'user-789',
+  requestId: request.headers.get('x-request-id') || 'unknown',
+  ipAddress: request.headers.get('x-forwarded-for') || null,
+  userAgent: request.headers.get('user-agent') || null,
+  metadata: { email: 'newuser@example.com', role: 'USER' },
+});
+```
+
+**Validation:**
+- Helper enforces required fields (throws if missing)
+- Metadata size limited to 10KB (enforced)
+- Integration tests ensure compliance
 
 ## 7. Security Policies
 
@@ -431,23 +460,78 @@ Without branch protection (default):
 - Documentation drift found post-merge: **Fix within 1 business day**
 - Broken external links: **Fix within 1 week** (non-blocking)
 
-## 10. Monitoring & Observability
+## 10. Monitoring & Observability (Phase 0.12)
+
+### Request ID Propagation
+
+**MANDATORY:** All HTTP requests must include a correlation ID for distributed tracing.
+
+**Header:** `x-request-id`
+**Format:** UUID v4 (e.g., `550e8400-e29b-41d4-a716-446655440000`)
+
+**Rules:**
+- Middleware reads incoming `x-request-id` or generates new UUID v4
+- Response MUST include `x-request-id` header (same value)
+- All structured logs SHOULD include `requestId` field
+- All audit events MUST include `requestId` field (required)
+
+**Implementation:** `apps/web/middleware.ts` (applies to all routes except static files)
 
 ### Application Logging
-- Structured logging (JSON)
-- Log levels: ERROR, WARN, INFO, DEBUG
-- Include correlation IDs
-- No PII in logs (unless encrypted)
+
+**MANDATORY:** Use structured logging helper for all server-side logs.
+
+**Format:** JSON Lines (one JSON object per line)
+
+**Required Fields:**
+- `ts` (string) - ISO 8601 timestamp in UTC
+- `level` (string) - Log level: info, warn, error, debug
+- `msg` (string) - Human-readable message (snake_case preferred)
+- `scope` (string) - Scope identifier (dot-separated, e.g., "api.health")
+
+**Optional Fields:**
+- `requestId` (string) - Request correlation ID (include when available)
+- `meta` (object) - Additional structured metadata
+- `error` (object) - Error details (name, message, stack)
+
+**Security Guardrails:**
+- ❌ NEVER log: passwords, tokens, API keys, credit cards, SSNs, complete session cookies
+- ✅ DO log: request IDs, user IDs (opaque), email addresses (audit only), timestamps, durations
+
+**Implementation:**
+```typescript
+import { logger } from '@/server/logger';
+
+logger.info({
+  msg: 'user_created',
+  scope: 'api.users',
+  requestId: request.headers.get('x-request-id') || undefined,
+  meta: { userId: 'user-123' },
+});
+```
+
+**Enforcement:**
+- Use `logger.info/warn/error/debug` instead of `console.log`
+- Code review checks for PII leakage in logs
+- No string interpolation in `msg` field (use `meta` for dynamic values)
 
 ### Metrics
+
+**Current Status:** Not yet implemented (planned for Phase 1+)
+
+**Planned:**
 - Track key performance indicators
 - Monitor error rates
 - Alert on anomalies
 - Dashboard for real-time visibility
 
 ### Tracing
-- Distributed tracing for requests
-- Performance profiling
+
+**Current Status:** Request ID propagation only (Phase 0.12)
+
+**Planned (Phase 1+):**
+- OpenTelemetry integration for distributed tracing
+- Performance profiling and span tracking
 - Database query monitoring
 
 ---

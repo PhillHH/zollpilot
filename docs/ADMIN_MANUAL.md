@@ -30,7 +30,7 @@ Das ZollPilot Admin-Backend bietet Werkzeuge für:
 
 **Sicherheit:** Sicherheitsmaßnahmen werden technisch und organisatorisch umgesetzt.
 
-## Aktueller Status (Phase 0.11)
+## Aktueller Status (Phase 0.12)
 
 ### Verfügbare Admin-Seite
 
@@ -147,36 +147,59 @@ Die folgenden Admin-Funktionen werden in zukünftigen Phasen implementiert:
 
 ## Audit-Protokolle
 
+### Unveränderlicher Audit-Trail (Neu in Phase 0.12)
+
+**Status:** ✅ Infrastruktur implementiert
+
+**Wichtig:** Die Audit-Trail-Infrastruktur ist vollständig implementiert. Alle zukünftigen Admin-Aktionen werden automatisch als unveränderliche Audit-Events in der Datenbank erfasst.
+
+**Erfasste Informationen pro Audit-Event:**
+- **Pflichtfelder:**
+  - `tenantId` - Mandanten-ID (Multi-Tenancy-Isolation)
+  - `action` - Aktionstyp (z.B. `USER_CREATED`, `PRICING_UPDATED`)
+  - `requestId` - Korrelations-ID für Distributed Tracing
+  - `createdAt` - Zeitstempel (automatisch, ISO 8601)
+
+- **Optionale Felder:**
+  - `actorUserId` - Benutzer-ID (null für System-Aktionen)
+  - `entityType` - Typ der betroffenen Ressource (z.B. "User", "Shipment")
+  - `entityId` - ID der betroffenen Ressource
+  - `ipAddress` - Client-IP-Adresse
+  - `userAgent` - Browser/Client-Informationen
+  - `metadata` - Zusätzlicher Kontext als JSON (max. 10KB)
+
+**Technische Details:** Audit-Events werden über die Helper-Funktion `logAuditEvent()` in `apps/web/src/server/audit.ts` erstellt. Siehe `docs/OBSERVABILITY.md` für vollständige Dokumentation.
+
 ### Anzeige des Audit-Trails
 
-**Status:** Noch nicht implementiert (Phase 0.5+)
+**Status:** Noch nicht implementiert (UI folgt in Phase 2+)
 
-**Wichtig:** Jede Admin-Aktion erzeugt ein Audit-Event mit:
-- Zeitstempel (ISO 8601)
-- Benutzer-ID und Benutzername
-- Aktionstyp
-- Betroffene Ressource
-- Alte und neue Werte (falls zutreffend)
-- IP-Adresse
-- User-Agent
+**Aktuell verfügbar:**
+- Audit-Events können über Prisma Studio eingesehen werden: `pnpm prisma:studio`
+- Datenbankabfragen über SQL oder Prisma Client möglich
+- Automatische Erfassung bei System-Aktionen (z.B. Database Seed)
 
-### Audit-Event-Typen
+### Implementierte Audit-Event-Typen
 
-**Geplante Event-Typen:**
-- `PRICING_UPDATE` - Preisänderung
-- `USER_ROLE_CHANGE` - Rollenänderung
-- `CONFIG_CHANGE` - Konfigurationsänderung
-- `SUPPORT_TICKET_VIEW` - Support-Ticket-Zugriff
-- `USER_DELETE` - Benutzer gelöscht
-- `USER_CREATE` - Benutzer erstellt
+**Verfügbar in Phase 0.12:**
+- `SYSTEM_SEED` - Datenbank-Initialisierung
+- `USER_CREATED` - Benutzer erstellt
+- `USER_UPDATED` - Benutzer aktualisiert
+- `USER_DELETED` - Benutzer gelöscht
+- `PRICING_UPDATED` - Preisänderung
+- `PRICING_EXPORTED` - Preisdaten exportiert
+
+**Erweiterbar:** Neue Aktionstypen können in `AUDIT_ACTIONS` Konstante hinzugefügt werden.
 
 ### Aufbewahrung von Audit-Logs
 
-**Geplante Richtlinie:**
-- Mindestaufbewahrung: 2 Jahre
-- Unveränderlich (append-only)
-- Verschlüsselt im Ruhezustand
-- Regelmäßige Backups
+**Implementierte Richtlinie (Phase 0.12):**
+- ✅ **Unveränderlich** - Append-only, keine Updates oder Löschungen
+- ✅ **Datenbankbasiert** - Gespeichert in `audit_events` Tabelle
+- ✅ **Verschlüsselt** - Database-level Verschlüsselung im Ruhezustand
+- ✅ **Validierung** - Pflichtfelder und Größenlimits werden technisch erzwungen
+- 📋 **Aufbewahrung** - Mindestens 2 Jahre empfohlen (organisatorische Richtlinie)
+- 📋 **Backups** - Teil der Datenbank-Backup-Strategie
 
 ## Support-Tools
 

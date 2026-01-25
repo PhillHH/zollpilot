@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { logAuditEvent, AUDIT_ACTIONS } from '../src/server/audit'
 
 const prisma = new PrismaClient()
 
@@ -35,20 +36,18 @@ async function main() {
 
   console.log(`✓ Created admin user: ${adminUser.email} (${adminUser.id})`)
 
-  // Create a sample audit event
-  const auditEvent = await prisma.auditEvent.create({
-    data: {
-      tenantId: tenant.id,
-      actorUserId: adminUser.id,
-      action: 'SYSTEM_SEED',
-      entityType: 'Database',
-      requestId: 'seed-' + Date.now(),
-      ipAddress: '127.0.0.1',
-      userAgent: 'Prisma Seed Script',
-      metadata: {
-        message: 'Initial database seed completed',
-        timestamp: new Date().toISOString(),
-      },
+  // Log audit event using helper (demonstrates proper usage)
+  const auditEvent = await logAuditEvent(prisma, {
+    tenantId: tenant.id,
+    actorUserId: adminUser.id,
+    action: AUDIT_ACTIONS.SYSTEM_SEED,
+    entityType: 'Database',
+    requestId: 'seed-' + Date.now(),
+    ipAddress: '127.0.0.1',
+    userAgent: 'Prisma Seed Script',
+    metadata: {
+      message: 'Initial database seed completed',
+      timestamp: new Date().toISOString(),
     },
   })
 
