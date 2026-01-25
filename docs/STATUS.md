@@ -33,8 +33,12 @@ Base URL: `/api`
 ## 🛑 Limitations (Known Gaps)
 - **No Real Customs Connection:** All submissions are internal only.
 - **Mock PDF:** The PDF is generated client-side/server-side with mock data, not a valid customs form.
-- **Single Tenant/User:** No authentication or role management active in UI (defaults to Admin).
 - **Tariff Logic:** No real tariff validation (mock 8-digit code check).
+
+## 🔒 Security & Auth
+- **Authentication:** Implemented (Credentials + DB Sessions).
+- **Authorization:** RBAC (Admin/User) and Tenant Isolation enforced.
+- **Validation:** Strict server-side Zod validation.
 
 ## 🔒 Security & Quality
 - **Validation:** Strict server-side Zod validation on completion.

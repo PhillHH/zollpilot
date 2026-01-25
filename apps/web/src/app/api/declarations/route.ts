@@ -2,12 +2,16 @@ import { NextResponse } from 'next/server';
 import { createDraft } from '@/server/declaration';
 import { prisma } from '@/server/db';
 import { logger } from '@/server/logger';
-
-const DEFAULT_TENANT_ID = '00000000-0000-0000-0000-000000000001';
+import { auth } from '@/auth';
 
 export async function POST() {
+  const session = await auth();
+  if (!session?.user?.tenantId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const declaration = await createDraft();
+    const declaration = await createDraft(session.user.tenantId, session.user.id);
     return NextResponse.json(declaration);
   } catch (error) {
     logger.error({ scope: 'api.declarations', msg: 'Failed to create declaration', error: error as Error });
@@ -16,9 +20,14 @@ export async function POST() {
 }
 
 export async function GET() {
+  const session = await auth();
+  if (!session?.user?.tenantId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const declarations = await prisma.declaration.findMany({
-      where: { tenantId: DEFAULT_TENANT_ID },
+      where: { tenantId: session.user.tenantId },
       orderBy: { updatedAt: 'desc' },
     });
     return NextResponse.json(declarations);

@@ -290,6 +290,11 @@ Available routes:
 - `/admin` - Admin area (placeholder, features coming in Phase 2)
 - `/api/health` - Health check endpoint
 
+### Creating a User (Local Development)
+1. Navigate to `http://localhost:3000/signup`.
+2. Register a new account. A Tenant will be automatically created.
+3. You will be redirected to the declarations dashboard.
+
 ### Production Build
 
 Build and run in production mode:
