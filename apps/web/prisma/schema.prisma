@@ -121,6 +121,7 @@ model DeclarationItem {
 
   declaration   Declaration @relation(fields: [declarationId], references: [id], onDelete: Cascade)
 
+  @@unique([declarationId, sequenceNumber]) // Sequence number must be unique per declaration
   @@index([declarationId])
   @@map("declaration_items")
 }

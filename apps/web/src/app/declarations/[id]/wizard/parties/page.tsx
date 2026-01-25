@@ -1,17 +1,18 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { partiesSchema } from '@/lib/validation/declaration';
-import { z } from 'zod';
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { partiesSchema } from '@/lib/validation/declaration'
+import { clientLogger } from '@/lib/client-logger'
+import { z } from 'zod'
 
-type FormValues = z.infer<typeof partiesSchema>;
+type FormValues = z.infer<typeof partiesSchema>
 
 export default function PartiesPage({ params }: { params: { id: string } }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
 
   const {
     register,
@@ -20,18 +21,18 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(partiesSchema),
-  });
+  })
 
   useEffect(() => {
     fetch(`/api/declarations/${params.id}`)
       .then((res) => res.json())
       .then((decl) => {
         if (decl.data && decl.data.parties) {
-          reset(decl.data.parties);
+          reset(decl.data.parties)
         }
-        setLoading(false);
-      });
-  }, [params.id, reset]);
+        setLoading(false)
+      })
+  }, [params.id, reset])
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -42,17 +43,20 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
           data: { parties: data },
           step: 2,
         }),
-      });
+      })
 
       if (res.ok) {
-        router.push(`/declarations/${params.id}/wizard/transport`);
+        router.push(`/declarations/${params.id}/wizard/transport`)
       }
     } catch (error) {
-      console.error(error);
+      clientLogger.error('Failed to update parties data', {
+        error,
+        context: 'wizard.parties',
+      })
     }
-  };
+  }
 
-  if (loading) return <div>Laden...</div>;
+  if (loading) return <div>Laden...</div>
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -70,7 +74,9 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.exporter?.name && (
-              <p className="text-red-500 text-sm">{errors.exporter.name.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.exporter.name.message}
+              </p>
             )}
           </div>
           <div>
@@ -81,7 +87,9 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.exporter?.address?.street && (
-              <p className="text-red-500 text-sm">{errors.exporter.address.street.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.exporter.address.street.message}
+              </p>
             )}
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -93,7 +101,9 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               {errors.exporter?.address?.city && (
-                <p className="text-red-500 text-sm">{errors.exporter.address.city.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.exporter.address.city.message}
+                </p>
               )}
             </div>
             <div>
@@ -106,7 +116,9 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
                 maxLength={2}
               />
               {errors.exporter?.address?.country && (
-                <p className="text-red-500 text-sm">{errors.exporter.address.country.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.exporter.address.country.message}
+                </p>
               )}
             </div>
           </div>
@@ -125,7 +137,9 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.recipient?.name && (
-              <p className="text-red-500 text-sm">{errors.recipient.name.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.recipient.name.message}
+              </p>
             )}
           </div>
           <div>
@@ -136,7 +150,9 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
               className="mt-1 block w-full border border-gray-300 rounded p-2"
             />
             {errors.recipient?.address?.street && (
-              <p className="text-red-500 text-sm">{errors.recipient.address.street.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.recipient.address.street.message}
+              </p>
             )}
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -148,7 +164,9 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               {errors.recipient?.address?.city && (
-                <p className="text-red-500 text-sm">{errors.recipient.address.city.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.recipient.address.city.message}
+                </p>
               )}
             </div>
             <div>
@@ -161,7 +179,9 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
                 maxLength={2}
               />
               {errors.recipient?.address?.country && (
-                <p className="text-red-500 text-sm">{errors.recipient.address.country.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.recipient.address.country.message}
+                </p>
               )}
             </div>
           </div>
@@ -179,5 +199,5 @@ export default function PartiesPage({ params }: { params: { id: string } }) {
         </button>
       </div>
     </form>
-  );
+  )
 }

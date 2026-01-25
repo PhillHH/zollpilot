@@ -8,8 +8,8 @@ ZollPilot helps organizations efficiently manage and navigate customs data with 
 
 ## Project Status
 
-**Phase:** 0.12 - Observability baseline (request IDs + structured logs + audit helper)
-**Next:** Phase 1 - Core features implementation
+**Phase:** Phase 1 Complete - IAA Wizard MVP
+**Next:** Phase 2 - Enhancements and extended features
 
 ## Features (Planned)
 
