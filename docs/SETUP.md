@@ -243,7 +243,31 @@ sudo usermod -aG docker $USER
 pnpm prisma:generate
 ```
 
+# Regenerate the client
+pnpm prisma:generate
+```
+
+## Running with Docker (Full Stack)
+
+To run the entire application (Database + Next.js + Migrations) in Docker, use the production `docker-compose.yml`. This simulates a production environment locally.
+
+### Start Full Stack
+
+```bash
+docker compose up --build
+```
+
+### Windows / WSL2 Notes
+
+If you are running on Windows:
+1. Ensure **Docker Desktop** is running.
+2. Use **WSL 2** backend.
+3. If you encounter file permission issues or "module not found" errors inside the container, it's likely due to mixing Windows and Linux filesystems.
+   - We use **anonymous volumes** in `docker-compose.yml` to prevent local `node_modules` (Windows binaries) from mounting into the Linux container.
+   - If you add new packages, you may need to rebuild the container: `docker compose up --build`.
+
 ## Running the Application
+
 
 ### Development Mode
 

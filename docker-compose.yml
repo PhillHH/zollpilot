@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   web:
     build:
@@ -21,6 +19,10 @@ services:
     working_dir: /app
     volumes:
       - .:/app
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/packages/shared/node_modules
+      - /app/packages/config/node_modules
     environment:
       - DATABASE_URL=postgresql://zollpilot:zollpilot_dev_pass@postgres:5432/zollpilot_dev?schema=public
     command: sh -c "corepack enable pnpm && pnpm i --frozen-lockfile && pnpm --filter @zollpilot/web db:push && pnpm --filter @zollpilot/web prisma:seed"
@@ -41,7 +43,7 @@ services:
     volumes:
       - zollpilot-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U zollpilot -d zollpilot_dev"]
+      test: [ "CMD-SHELL", "pg_isready -U zollpilot -d zollpilot_dev" ]
       interval: 5s
       timeout: 5s
       retries: 5

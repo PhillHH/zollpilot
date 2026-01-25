@@ -16,34 +16,39 @@ RUN corepack enable pnpm && pnpm i --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY . .
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Generate Prisma Client
 RUN corepack enable pnpm && pnpm --filter @zollpilot/web prisma:generate
 
 # Build
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN corepack enable pnpm && pnpm --filter @zollpilot/web build
 
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
+RUN apk add --no-cache libc6-compat openssl
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy necessary files
-COPY --from=builder /app/apps/web/public ./apps/web/public
+# Copy necessary files
 
 # Set the correct permission for prerender cache
 # mkdir .next is handled by next build usually but we need to ensure permissions
@@ -55,8 +60,8 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
+ENV PORT=3000
 # set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "apps/web/server.js"]

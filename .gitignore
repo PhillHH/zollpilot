@@ -3,6 +3,11 @@ node_modules/
 .pnp
 .pnp.js
 
+# pnpm store (CRITICAL)
+.pnpm-store/
+.pnpm-store/**
+
+
 # Testing
 coverage/
 *.lcov

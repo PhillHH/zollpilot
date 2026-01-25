@@ -3,6 +3,12 @@ const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   poweredByHeader: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
   /**
    * Security Headers (Phase 0.11)

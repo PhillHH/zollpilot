@@ -1,0 +1,9 @@
+{
+    "name": "@zollpilot/config",
+    "version": "0.0.0",
+    "private": true,
+    "exports": {
+        "./eslint": "./eslint-preset.js",
+        "./jest": "./jest-preset.js"
+    }
+}
