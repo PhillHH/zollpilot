@@ -1,12 +1,13 @@
 # ZollPilot Benutzerhandbuch
 
-**Status:** In Entwicklung - Wird mit der Implementierung neuer Funktionen erweitert
+**Status:** In Entwicklung (Sprint 1 MVP)
 
 **Zielgruppe:** Endnutzer des öffentlichen ZollPilot-Portals
 
 ## Inhaltsverzeichnis
 
 - [Einführung](#einführung)
+- [Internetausfuhranmeldung (IAA)](#internetausfuhranmeldung-iaa)
 - [Erste Schritte](#erste-schritte)
 - [Verfügbare Seiten](#verfügbare-seiten)
 - [Funktionen](#funktionen)
@@ -17,11 +18,23 @@
 
 ZollPilot hilft Ihnen, Zolldaten strukturiert zu erfassen und zu verwalten.
 
-**Aktueller Stand:** Die Anwendung befindet sich in aktiver Entwicklung (Phase 0.12). Datenpersistenz über PostgreSQL-Datenbank ist implementiert.
+**Aktueller Stand:** Phase 1 (MVP) - IAA Export Assistent ist verfügbar.
 
-**Qualitätssicherung:** Die Zuverlässigkeit der Plattform ist durch automatisierte Tests und strenge Qualitätskontrollen gewährleistet.
+## Internetausfuhranmeldung (IAA)
 
-**Sicherheit:** Sicherheitsmaßnahmen werden technisch und organisatorisch umgesetzt.
+Der IAA-Assistent führt Sie Schritt für Schritt durch die Erstellung einer Ausfuhranmeldung.
+
+### Funktionsweise
+1. **Start:** Klicken Sie auf "Neue Anmeldung" im Dashboard.
+2. **Beteiligte:** Geben Sie Versender und Empfänger an.
+3. **Transport:** Wählen Sie den Verkehrszweig und geben Sie Kennzeichen ein.
+4. **Waren:** Erfassen Sie Ihre Warenpositionen (Beschreibung, Gewicht, Wert).
+5. **Abschluss:** Prüfen Sie die Daten und laden Sie das PDF herunter.
+
+### Wichtige Hinweise
+- Sie können den Prozess jederzeit unterbrechen und später fortsetzen ("Entwurf").
+- Alle Pflichtfelder müssen ausgefüllt sein, bevor Sie die Anmeldung abschließen können.
+- Es erfolgt **keine** Übermittlung an den Zoll (Demo-Modus).
 
 ## Erste Schritte
 
@@ -39,6 +52,7 @@ Die ZollPilot-Webanwendung ist über Ihren Browser erreichbar. Öffnen Sie einfa
 
 Die Hauptnavigation befindet sich am oberen Rand jeder Seite und ermöglicht Ihnen den schnellen Zugriff auf:
 - **Home:** Startseite mit Übersicht
+- **Meine Anmeldungen:** Dashboard für Ihre IAA-Vorgänge
 - **Admin:** Administrationsbereich (nur für autorisierte Benutzer)
 
 ## Verfügbare Seiten
@@ -47,77 +61,46 @@ Die Hauptnavigation befindet sich am oberen Rand jeder Seite und ermöglicht Ihn
 
 Die Startseite bietet einen Überblick über ZollPilot und seine Funktionen.
 
-**Was Sie hier finden:**
-- Willkommensnachricht und Plattformübersicht
-- Links zu wichtigen Bereichen
-- Schnellzugriff auf häufig verwendete Funktionen (wird in zukünftigen Phasen erweitert)
+### Dashboard (/declarations)
 
-### Öffentliches Portal
+Hier sehen Sie alle Ihre angelegten Ausfuhranmeldungen (Entwürfe und abgeschlossene).
 
-Das öffentliche Portal ermöglicht den Zugriff auf Zolldaten und -verfahren ohne Anmeldung.
+### IAA Wizard (/declarations/[id]/wizard/...)
 
-**Geplante Funktionen (kommende Phasen):**
-- Suche nach Zollverfahren
-- Durchsuchen von Zolldaten
-- SEO-optimierte Inhalte für bessere Auffindbarkeit
-- Filterung und Kategorisierung
-
-### Health Check (/api/health)
-
-Ein technischer Endpunkt zur Überprüfung des Systemstatus. Dieser wird hauptsächlich für Monitoring-Zwecke verwendet.
+Der Assistent zur Datenerfassung.
 
 ## Funktionen
 
-### Aktuelle Funktionen (Phase 0.3)
+### Aktuelle Funktionen (Phase 1 MVP)
 
-**Öffentliches Portal:**
-- Zugriff auf die Startseite mit Plattformübersicht
-- Navigation zwischen öffentlichen und Admin-Bereichen
-- Health-Check-Endpunkt für Systemüberwachung
+**IAA Wizard:**
+- Schritt-für-Schritt Datenerfassung
+- Automatische Speicherung
+- PDF-Export
+- Validierung der Eingaben
 
 **Datenpersistenz:**
 - PostgreSQL-Datenbank für dauerhafte Datenspeicherung
 - Mehrmandantenfähigkeit (Multi-Tenancy) vorbereitet
-- Audit-Trail für Nachvollziehbarkeit aller Änderungen
 
 ### Geplante Funktionen (zukünftige Phasen)
 
-Die folgenden Funktionen werden in kommenden Entwicklungsphasen hinzugefügt:
-
-**Datensuche und -navigation:**
-- Volltextsuche in Zolldaten
-- Erweiterte Filteroptionen
-- Kategoriebasierte Navigation
-- Detailansichten für Zollverfahren
-
-**Benutzerverwaltung:**
-- Kontoerstellung und -verwaltung
-- Personalisiertes Dashboard
-- Gespeicherte Suchen und Favoriten
+- Echte Zoll-Anbindung (ATLAS)
+- Benutzerverwaltung
+- Import-Verfahren
 
 ## Häufig gestellte Fragen (FAQ)
 
 ### Allgemeine Fragen
 
 **F: Was ist ZollPilot?**
-A: ZollPilot ist eine Plattform zur strukturierten Erfassung und Verwaltung von Zolldaten. Sie bietet ein öffentliches Portal für den Zugriff auf Zollinformationen sowie einen Administrationsbereich für die Systemverwaltung.
+A: ZollPilot ist eine Plattform zur strukturierten Erfassung und Verwaltung von Zolldaten.
 
-**F: Benötige ich ein Konto, um ZollPilot zu nutzen?**
-A: Für den Zugriff auf das öffentliche Portal ist derzeit kein Konto erforderlich. Die Benutzerverwaltung wird in einer späteren Phase implementiert.
+**F: Werden meine Daten an den Zoll gesendet?**
+A: Nein, im aktuellen MVP-Status werden keine Daten übermittelt. Das PDF dient nur zu Demonstrationszwecken.
 
-**F: In welcher Phase befindet sich die Entwicklung?**
-A: Derzeit in Phase 0.3 - Die grundlegende Anwendungsstruktur mit Next.js und Datenpersistenz über PostgreSQL ist implementiert. Weitere Funktionen folgen in zukünftigen Phasen.
-
-### Technische Fragen
-
-**F: Welche Browser werden unterstützt?**
-A: Alle modernen Browser werden unterstützt, einschließlich Google Chrome, Mozilla Firefox, Safari und Microsoft Edge. Wir empfehlen die Verwendung der neuesten Versionen für die beste Erfahrung.
-
-**F: Sind meine Daten sicher?**
-A: Ja. Detaillierte Informationen zu unseren Sicherheitsmaßnahmen finden Sie in SECURITY.md.
-
-**F: Ist die Plattform für mobile Geräte optimiert?**
-A: Die mobile Optimierung wird in zukünftigen Phasen implementiert.
+**F: Benötige ich ein Konto?**
+A: Nein, derzeit wird ein Demo-Benutzer automatisch verwendet.
 
 ## Support
 
@@ -127,19 +110,10 @@ Wenn Sie Unterstützung benötigen:
 
 - **Dokumentation:** Siehe dieses Handbuch und SETUP.md für technische Details
 - **Fehlerberichte:** Issues können über das GitHub-Repository gemeldet werden
-- **E-Mail-Support:** [Wird in späteren Phasen bereitgestellt]
 
-### Bekannte Einschränkungen (Phase 0.6)
+### Bekannte Einschränkungen (MVP)
 
-- Keine Benutzerauthentifizierung (geplant für Phase 2)
-- Begrenzte Funktionalität im Admin-Bereich
-- Keine Suchfunktion für Zolldaten
-- Keine öffentlich verfügbaren Daten (kommt in späteren Phasen)
-
-**Neu in Phase 0.5-0.6:**
-- ✅ Datenbankintegration implementiert (PostgreSQL + Prisma)
-- ✅ Mehrmandantenfähigkeit vorbereitet
-- ✅ Audit-Trail-Infrastruktur bereitgestellt
-- ✅ Umfangreiche automatisierte Tests (Unit, Integration, E2E)
-
-Diese Einschränkungen werden in den kommenden Entwicklungsphasen behoben.
+- Keine Benutzerauthentifizierung
+- Keine Abgabenberechnung
+- PDF ist ein Mockup
+- Keine Validierung gegen echte Codelisten (Länder, Währungen)

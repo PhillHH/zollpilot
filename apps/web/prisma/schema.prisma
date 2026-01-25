@@ -20,6 +20,7 @@ model Tenant {
   // Relations
   users       User[]
   auditEvents AuditEvent[]
+  declarations Declaration[]
 
   @@map("tenants")
 }
@@ -45,6 +46,7 @@ model User {
   // Relations
   tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   auditEvents AuditEvent[]
+  declarations Declaration[]
 
   // Unique constraint: email must be unique per tenant
   @@unique([tenantId, email])
@@ -77,4 +79,48 @@ model AuditEvent {
   @@index([tenantId, action, createdAt])
   @@index([actorUserId])
   @@map("audit_events")
+}
+
+enum DeclarationStatus {
+  DRAFT
+  COMPLETED
+}
+
+enum ProcedureType {
+  EXPORT
+}
+
+model Declaration {
+  id          String            @id @default(uuid()) @db.Uuid
+  tenantId    String            @db.Uuid
+  userId      String            @db.Uuid
+  status      DeclarationStatus @default(DRAFT)
+  procedure   ProcedureType     @default(EXPORT)
+  step        Int               @default(1)
+  data        Json              @default("{}") // Stores parties, transport, general info
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       DeclarationItem[]
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([status])
+  @@map("declarations")
+}
+
+model DeclarationItem {
+  id            String      @id @default(uuid()) @db.Uuid
+  declarationId String      @db.Uuid
+  sequenceNumber Int
+  data          Json        @default("{}") // Stores description, mass, value, commodityCode
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  declaration   Declaration @relation(fields: [declarationId], references: [id], onDelete: Cascade)
+
+  @@index([declarationId])
+  @@map("declaration_items")
 }

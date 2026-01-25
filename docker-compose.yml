@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://zollpilot:zollpilot_dev_pass@postgres:5432/zollpilot_dev?schema=public
+      - NEXT_TELEMETRY_DISABLED=1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  migrate:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://zollpilot:zollpilot_dev_pass@postgres:5432/zollpilot_dev?schema=public
+    command: sh -c "corepack enable pnpm && pnpm i --frozen-lockfile && pnpm --filter @zollpilot/web db:push && pnpm --filter @zollpilot/web prisma:seed"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: zollpilot-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: zollpilot
+      POSTGRES_PASSWORD: zollpilot_dev_pass
+      POSTGRES_DB: zollpilot_dev
+    volumes:
+      - zollpilot-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zollpilot -d zollpilot_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  zollpilot-postgres-data:
