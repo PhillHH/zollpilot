@@ -555,6 +555,127 @@ pnpm test:coverage
 
 **Important:** The `test:coverage` command will FAIL if any threshold is not met.
 
+## Observability Verification (Phase 0.12)
+
+ZollPilot implements observability through request IDs, structured logging, and audit trails.
+
+### Verify Request ID Propagation
+
+Check that the `x-request-id` header is present on all responses:
+
+```bash
+# Test health endpoint
+curl -i http://localhost:3000/api/health
+
+# Expected response header:
+# x-request-id: 550e8400-e29b-41d4-a716-446655440000
+```
+
+**What to verify:**
+- Response includes `x-request-id` header
+- Value is a UUID v4 (format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`)
+- Same request ID returned if you provide one:
+  ```bash
+  curl -H "x-request-id: my-custom-id" http://localhost:3000/api/health
+  # Should return: x-request-id: my-custom-id
+  ```
+
+### View Structured Logs
+
+All server-side logs are emitted to stdout in JSON format.
+
+**Start development server:**
+```bash
+pnpm dev
+```
+
+**Make a request to trigger logs:**
+```bash
+curl http://localhost:3000/api/health
+```
+
+**Expected log output:**
+```json
+{"ts":"2026-01-24T15:30:45.123Z","level":"info","msg":"health_check","scope":"api.health","requestId":"550e8400-e29b-41d4-a716-446655440000"}
+```
+
+**Log schema:**
+- `ts` - ISO 8601 timestamp in UTC
+- `level` - Log level (info, warn, error, debug)
+- `msg` - Event message (snake_case)
+- `scope` - Scope identifier (dot-separated)
+- `requestId` - Request correlation ID (optional)
+- `meta` - Additional metadata (optional)
+- `error` - Error details (optional)
+
+### Query Audit Events
+
+Audit events are stored in the database and can be viewed using Prisma Studio.
+
+**Open Prisma Studio:**
+```bash
+pnpm prisma:studio
+```
+
+**Navigate to:** `AuditEvent` model
+
+**Verify:**
+- Audit events exist (created during `pnpm prisma:seed`)
+- All events have `tenantId`, `action`, `requestId`, and `createdAt`
+- Events are immutable (no update/delete operations)
+
+**Query via SQL:**
+```sql
+-- View recent audit events
+SELECT id, "tenantId", action, "requestId", "createdAt"
+FROM audit_events
+ORDER BY "createdAt" DESC
+LIMIT 10;
+```
+
+### Test Observability Stack
+
+Run integration tests for audit logging:
+
+```bash
+pnpm test apps/web/src/server/audit.integration.test.ts
+```
+
+Run E2E tests for request ID propagation:
+
+```bash
+pnpm test:e2e apps/web/e2e/health.e2e.spec.ts
+```
+
+**What is tested:**
+- Request ID middleware generates valid UUIDs
+- Health endpoint returns `x-request-id` header
+- Audit helper validates required fields
+- Audit events are stored in database
+- Metadata size limits are enforced
+
+### Troubleshooting Observability
+
+**Request ID not appearing:**
+- Check middleware is running: `apps/web/middleware.ts` should be present
+- Verify route matches middleware config (excludes `_next/static`, etc.)
+- Check Next.js dev server logs for errors
+
+**Logs not appearing:**
+- Ensure you're using `logger.info/warn/error` from `@/server/logger`
+- Check `NODE_ENV` is set (defaults to 'development')
+- Verify stdout is not redirected or filtered
+
+**Audit events not saving:**
+- Check database connection: `pnpm db:smoke`
+- Verify migrations are applied: `pnpm prisma:migrate`
+- Check for validation errors in server logs
+- Ensure `tenantId`, `action`, and `requestId` are provided
+
+**See also:**
+- [OBSERVABILITY.md](./OBSERVABILITY.md) - Full observability documentation
+- [POLICIES.md](./POLICIES.md) - Observability requirements and policies
+
 ## Code Quality
 
 ZollPilot enforces strict quality gates to ensure code reliability and maintainability.

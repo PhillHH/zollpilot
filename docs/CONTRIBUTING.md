@@ -600,6 +600,278 @@ See [docs/POLICIES.md](POLICIES.md#dependency-management-phase-092) for:
 - Emergency security patch workflow
 - Breaking change handling
 
+## Security Scanning (Phase 0.9.3)
+
+ZollPilot uses multiple layers of automated security scanning to detect vulnerabilities, security issues, and dependency risks. Understanding what each scanner does and where to view results is essential for maintaining security posture.
+
+### Security Scanning Layers
+
+We use three complementary scanning approaches:
+
+#### 1. CI Quality Gates (Phase 0.8+)
+**What:** Linting, type checking, and unit/integration/E2E tests
+**When:** Every pull request and push
+**Catches:**
+- Code quality issues
+- Type errors
+- Broken functionality
+- Test failures
+
+**View Results:** GitHub Actions → CI workflow run
+
+#### 2. CodeQL Security Analysis (Phase 0.9.3)
+**What:** Static Application Security Testing (SAST) for JavaScript/TypeScript
+**When:**
+- Every pull request to `main`
+- Every push to `main`
+- Weekly schedule (Mondays, 06:00 UTC)
+
+**Catches:**
+- SQL injection vulnerabilities
+- Cross-site scripting (XSS)
+- Path traversal issues
+- Command injection
+- Insecure randomness
+- Hardcoded credentials
+- And 100+ other security patterns
+
+**View Results:**
+1. Go to repository **Security** tab
+2. Click **Code scanning** in left sidebar
+3. View alerts filtered by:
+   - Branch
+   - Severity (Critical, High, Medium, Low)
+   - Status (Open, Dismissed, Fixed)
+4. Click individual alert for:
+   - Full description and remediation
+   - Code location and data flow
+   - CWE classification
+
+**Result Integration:**
+- CodeQL findings appear as checks on pull requests
+- High/Critical findings should block merging (configure in branch protection)
+- Results uploaded to GitHub Security dashboard automatically
+
+#### 3. Dependabot Security Alerts (Phase 0.9.2)
+**What:** Dependency vulnerability scanning (Software Composition Analysis)
+**When:** Continuous monitoring, PRs created weekly
+**Catches:**
+- Known CVEs in npm packages
+- Outdated dependencies with security fixes
+- Transitive dependency vulnerabilities
+
+**View Results:**
+1. Go to repository **Security** tab
+2. Click **Dependabot alerts** in left sidebar
+3. Or view auto-generated Dependabot PRs in **Pull requests** tab
+
+### How to Handle Security Findings
+
+**CodeQL Alerts:**
+See [docs/POLICIES.md](POLICIES.md#codeql-findings-phase-093) for severity handling and remediation workflow.
+
+**Dependabot Alerts:**
+See [docs/POLICIES.md](POLICIES.md#dependency-management-phase-092) for review SLAs and emergency patch process.
+
+### Local Security Scanning
+
+**Recommended Pre-Commit Checks:**
+```bash
+# Run all quality gates (includes basic security checks)
+pnpm lint        # ESLint catches some security anti-patterns
+pnpm typecheck   # Type safety prevents many runtime errors
+pnpm test        # Tests catch regressions and bugs
+
+# Audit dependencies for high/critical vulnerabilities (Phase 0.11)
+pnpm security:audit  # Check for high/critical CVEs (same as CI)
+
+# Full audit (all severities, more verbose)
+pnpm audit           # Check all CVE severities
+pnpm audit --fix     # Automatically fix vulnerabilities when possible
+```
+
+**Note:** CodeQL requires GitHub infrastructure and cannot run fully locally, but you can use ESLint security plugins for similar local checks (future enhancement).
+
+### Security Scanning Status
+
+**As of Phase 0.11:**
+- ✅ CI quality gates enforced (Phase 0.8+)
+- ✅ CodeQL analysis configured (Phase 0.9.3)
+- ✅ Dependabot alerts enabled (Phase 0.9.2, requires GitHub UI config)
+- ✅ Dependency security audit (Phase 0.11) - high/critical vulnerabilities block CI
+- ✅ HTTP security headers enforced (Phase 0.11) - runtime E2E tested
+- ✅ Environment validation (Phase 0.11) - fail-fast on misconfiguration
+- ⏳ CodeQL results as required status check (configure in branch protection)
+- ⏳ ESLint security plugin (Phase 1.x)
+
+## Documentation Drift Gate (Phase 0.10)
+
+**Documentation drift** occurs when documentation becomes outdated and no longer matches the code. This is prevented through automated checks that validate documentation stays in sync with implementation.
+
+### What is Checked
+
+The `docs:check` command validates:
+
+1. **Internal Markdown Links**
+   - Relative links (e.g., `[Setup](./SETUP.md)`, `[../README.md](../README.md)`)
+   - File existence validation
+   - Anchor validation (e.g., `[Branch Protection](./CONTRIBUTING.md#branch-protection-setup-phase-091)`)
+   - Detects broken links before they reach users
+
+2. **Documented Routes/Endpoints**
+   - Extracts routes mentioned in documentation (e.g., `/admin`, `/api/health`, `/verfahren/[slug]`)
+   - Verifies routes exist in Next.js app structure:
+     - Pages: `apps/web/src/app/**/page.tsx`
+     - API routes: `apps/web/src/app/api/**/route.ts`
+   - Prevents documentation from describing non-existent features
+   - Ignores routes in code blocks (fenced with ` ``` `)
+
+3. **Route Mapping Examples**
+   - `/admin` → `apps/web/src/app/admin/page.tsx`
+   - `/api/health` → `apps/web/src/app/api/health/route.ts`
+   - `/verfahren/[slug]` → `apps/web/src/app/verfahren/[slug]/page.tsx`
+
+### How to Run Locally
+
+**Before committing documentation changes:**
+
+```bash
+# Run documentation drift check
+pnpm docs:check
+```
+
+**Expected output (success):**
+
+```
+🔍 Documentation Drift Check
+
+📂 Docs directory: docs
+📂 Route base: apps/web/src/app
+
+📄 Found 7 markdown files
+
+📝 Validating internal markdown links...
+🛣️  Validating documented routes...
+   Found 2 documented routes
+
+📊 Results
+
+✅ No documentation drift detected
+   7 files checked
+   0 warnings (non-blocking)
+```
+
+**Expected output (failure):**
+
+```
+❌ Errors:
+   docs/SETUP.md:42 - Broken link: "./MISSING.md" (target not found: docs/MISSING.md)
+   docs/CONTRIBUTING.md - Documented route "/api/fake" not found in code (expected: apps/web/src/app/api/fake/route.ts)
+
+❌ Documentation drift detected: 2 error(s)
+
+💡 To fix:
+   1. Update documentation to match code
+   2. Add missing routes/pages to code
+   3. Add to ignoredRoutes in scripts/docs-check.config.json (with justification)
+```
+
+### CI Enforcement
+
+Documentation drift check runs as a **required CI job** on all pull requests:
+- Job name: "Documentation Drift Check"
+- Runs in parallel with other quality gates
+- Must pass before merging (when branch protection configured)
+- Typical runtime: <5 seconds
+
+### Allowlist for Planned Features
+
+Sometimes you need to document a route that doesn't exist yet (planned feature). Use the allowlist sparingly:
+
+**Configuration file:** `scripts/docs-check.config.json`
+
+```json
+{
+  "routeBaseDir": "apps/web/src/app",
+  "ignoredRoutes": [
+    "/verfahren/[slug]"  // Planned for Phase 1.2
+  ],
+  "ignoredFiles": []
+}
+```
+
+**Rules for using allowlist:**
+1. **Always add a comment** explaining why the route is allowlisted
+2. **Include a phase/sprint reference** for when it will be implemented
+3. **Remove from allowlist** when the route is implemented
+4. **Review allowlist quarterly** to remove obsolete entries
+5. **Prefer implementing the route** over adding to allowlist
+
+**Anti-patterns (DO NOT DO):**
+- Adding all planned routes to allowlist upfront
+- Using allowlist to avoid fixing broken links
+- Leaving items in allowlist indefinitely
+- Allowlisting without documentation of reason
+
+### Common Scenarios
+
+**Scenario 1: Broken Link After File Rename**
+
+```bash
+# Error: docs/SETUP.md:15 - Broken link: "./OLD_NAME.md"
+
+# Fix: Update the link to the new filename
+sed -i 's/OLD_NAME.md/NEW_NAME.md/g' docs/SETUP.md
+```
+
+**Scenario 2: Documented Route Not Yet Implemented**
+
+```bash
+# Error: Documented route "/dashboard" not found
+
+# Option A (preferred): Implement the route
+mkdir -p apps/web/src/app/dashboard
+touch apps/web/src/app/dashboard/page.tsx
+
+# Option B (temporary): Add to allowlist with justification
+# Edit scripts/docs-check.config.json:
+{
+  "ignoredRoutes": ["/dashboard"]  // Phase 1.3 - Dashboard implementation
+}
+```
+
+**Scenario 3: Anchor Not Found**
+
+```bash
+# Warning (non-blocking): Anchor not found: "security-settings" in docs/CONTRIBUTING.md
+
+# Fix: Check heading spelling/capitalization
+# Anchors are case-sensitive and auto-generated from headings:
+# "Security Settings" → "security-settings"
+# "API Documentation" → "api-documentation"
+```
+
+### Best Practices
+
+1. **Run `pnpm docs:check` before every documentation commit**
+2. **Update docs when adding/removing routes**
+3. **Use relative links** for internal documentation (e.g., `./SETUP.md`, not absolute paths)
+4. **Test anchor links** - anchors are generated from headings, ensure they match
+5. **Keep allowlist minimal** - prefer fixing issues over ignoring them
+
+### Integration with Other Gates
+
+Documentation drift check complements other quality gates:
+
+| Gate | What It Checks | When |
+|------|----------------|------|
+| **docs:check** | Docs ↔ Code sync | Every PR (fast, <5s) |
+| **typecheck** | Type correctness | Every PR |
+| **test:unit** | Code functionality | Every PR |
+| **test:integration** | Database + API | Every PR |
+| **test:e2e** | User flows | Every PR |
+| **CodeQL** | Security issues | PR + weekly |
+
 ### Quality Gates (Phase 0.4+)
 
 **ENFORCED:** These checks must pass before merging. Run them locally before creating a PR.

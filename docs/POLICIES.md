@@ -133,31 +133,60 @@ Examples:
 ### Admin Action Audit
 **MANDATORY:** Every admin action must generate an immutable audit event.
 
-### Audit Event Requirements
-- Timestamp (ISO 8601)
-- User ID and username
-- Action type
-- Resource ID and type
-- Previous and new values (where applicable)
-- IP address
-- User agent
-- Request ID (for tracing)
+### Audit Event Requirements (Phase 0.12)
 
-### Audit Event Types (examples)
-- `PRICING_UPDATE`
-- `USER_ROLE_CHANGE`
-- `CONFIG_UPDATE`
-- `USER_DELETE`
-- `SUPPORT_ACCESS`
+**Required Fields:**
+- `tenantId` (UUID) - Multi-tenant isolation
+- `action` (string) - Action type from AUDIT_ACTIONS constant
+- `requestId` (string) - Request correlation ID (from x-request-id header)
+- `createdAt` (timestamp) - Auto-generated, immutable
+
+**Optional Fields:**
+- `actorUserId` (UUID) - User who performed action (null for system actions)
+- `entityType` (string) - Type of entity affected (e.g., "User", "Shipment")
+- `entityId` (string) - ID of entity affected
+- `ipAddress` (string) - Client IP address
+- `userAgent` (string) - Client user agent
+- `metadata` (JSON, max 10KB) - Additional context
+
+### Standard Audit Actions
+
+Use constants from `apps/web/src/server/audit.ts`:
+- `SYSTEM_SEED` - Database initialization
+- `USER_CREATED`, `USER_UPDATED`, `USER_DELETED` - User management
+- `PRICING_UPDATED`, `PRICING_EXPORTED` - Pricing operations
+- Add new actions as needed to the `AUDIT_ACTIONS` constant
 
 ### Audit Log Storage
-- Immutable (append-only)
-- Encrypted at rest
-- Retention: TBD (minimum 2 years recommended)
-- Regular backups
+- **Immutable** - NEVER update or delete audit events (append-only)
+- **Database-backed** - Stored in `audit_events` table via Prisma
+- **Encrypted at rest** - Database-level encryption
+- **Retention:** Minimum 2 years recommended for compliance
+- **Regular backups** - Included in database backup strategy
 
-### Implementation
-TBD - Will be enforced via Prisma middleware and service layer (Phase 0.5+)
+### Implementation (Phase 0.12)
+
+**Helper Function:**
+```typescript
+import { logAuditEvent, AUDIT_ACTIONS } from '@/server/audit';
+
+await logAuditEvent(prisma, {
+  tenantId: 'tenant-123',
+  actorUserId: 'user-456',
+  action: AUDIT_ACTIONS.USER_CREATED,
+  entityType: 'User',
+  entityId: 'user-789',
+  requestId: request.headers.get('x-request-id') || 'unknown',
+  ipAddress: request.headers.get('x-forwarded-for') || null,
+  userAgent: request.headers.get('user-agent') || null,
+  metadata: { email: 'newuser@example.com', role: 'USER' },
+});
+```
+
+**Validation:**
+- Helper enforces required fields (throws if missing)
+- Metadata size limited to 10KB (enforced)
+- Integration tests ensure compliance
 
 ## 7. Security Policies
 
@@ -241,6 +270,75 @@ TBD - Will be enforced via Prisma middleware and service layer (Phase 0.5+)
 - No `--force` flag for dependency installs without documented reason
 - No pinning dependencies to vulnerable versions without security exception
 
+### CodeQL Findings (Phase 0.9.3)
+
+**Automated Static Analysis:**
+- CodeQL scans all JavaScript/TypeScript code on PRs and pushes to `main`
+- Weekly scheduled scans (Mondays, 06:00 UTC)
+- Uses `security-and-quality` query suite for comprehensive coverage
+- Results uploaded to GitHub Security dashboard
+
+**Severity Handling:**
+
+| Severity | Response SLA | Remediation SLA | Action Required |
+|----------|-------------|-----------------|-----------------|
+| **Critical** | 4 hours | 1 business day | Immediate fix, hotfix branch if in production |
+| **High** | 1 business day | 3 business days | Priority fix, cannot merge PR with new high findings |
+| **Medium** | 3 business days | 1 sprint | Fix in current/next sprint, can merge with justification |
+| **Low** | 1 sprint | 2 sprints | Fix when convenient, tech debt backlog |
+
+**Remediation Workflow:**
+
+1. **Alert Notification (automatic)**
+   - CodeQL findings appear in PR checks
+   - Security tab shows all alerts with severity
+   - GitHub can notify security team (configure in Settings → Code security)
+
+2. **Triage (within Response SLA)**
+   - Review alert description and data flow
+   - Determine if it's a true positive or false positive
+   - Check if code path is reachable in production
+   - Assess exploitability and business impact
+
+3. **Resolution (within Remediation SLA)**
+
+   **For True Positives:**
+   - Fix the vulnerability following CodeQL remediation guidance
+   - Add test case to prevent regression
+   - Document fix in commit message with CVE/CWE reference
+   - Mark alert as "Fixed" (happens automatically on merge)
+
+   **For False Positives:**
+   - Document why it's a false positive (code never executes, input validated elsewhere, etc.)
+   - Add code comment explaining safety
+   - Dismiss alert in GitHub Security tab with reason
+   - Consider adding suppression comment if appropriate
+
+4. **Verification**
+   - Re-run CodeQL scan after fix
+   - Verify alert marked as "Fixed" or "Dismissed"
+   - Update security documentation if pattern is common
+
+**PR Merge Rules:**
+- **Critical/High:** Must be fixed before merging (no exceptions)
+- **Medium:** Can merge with tech lead approval + issue filed
+- **Low:** Can merge freely, track in backlog
+
+**False Positive Rate Management:**
+- Track false positive rate monthly
+- If FP rate >30%, consider adjusting query suite or adding suppressions
+- Document common false positives in team wiki
+
+**Dismissal Reasons (valid):**
+- False positive (explain why)
+- Won't fix (technical debt accepted, not exploitable)
+- Used in tests (test code, not production)
+
+**Dismissal Reasons (invalid):**
+- "Too hard to fix" (not acceptable for Critical/High)
+- "No time" (prioritize security over features)
+- "Unlikely to be exploited" (without evidence)
+
 ### Input Validation
 - Validate all user input
 - Sanitize all output
@@ -283,8 +381,8 @@ The following checks **run automatically** on every pull request:
 - ✅ Unit tests (≥80% coverage) - **RUNS IN CI**
 - ✅ Integration tests (Postgres + Prisma) - **RUNS IN CI**
 - ✅ E2E tests (Playwright smoke tests) - **RUNS IN CI**
-- ⏳ Documentation drift check (Phase 0.10)
-- ⏳ Security audit (dependencies)
+- ✅ Documentation drift check (Phase 0.10) - **RUNS IN CI**
+- ✅ Security audit - high/critical vulnerabilities (Phase 0.11) - **RUNS IN CI**
 
 #### Enforcement Status (Phase 0.9.1)
 
@@ -333,23 +431,107 @@ Without branch protection (default):
 - Technical accuracy verified
 - Clarity and completeness checked
 
-## 10. Monitoring & Observability
+### Drift Prevention (Phase 0.10)
+
+**Policy:** Documentation must stay in sync with code at all times. Documentation drift is a merge-blocking failure.
+
+**Automated Checks:**
+- `pnpm docs:check` runs in CI on every PR
+- Validates internal markdown links (file existence, anchors)
+- Verifies documented routes/endpoints exist in codebase
+- Fails CI if drift detected
+
+**Developer Responsibilities:**
+- Run `pnpm docs:check` locally before committing documentation changes
+- Update documentation in the **same PR** as code changes
+- Never merge code that breaks documented routes without updating docs
+- Use allowlist (`scripts/docs-check.config.json`) only for planned features with justification
+
+**Allowlist Rules:**
+- Allowlist is for **planned features only** (e.g., documented in Phase 1 but not yet implemented)
+- All allowlist entries must include:
+  - Reason/justification comment
+  - Phase/sprint reference for implementation
+  - Regular quarterly review to remove obsolete entries
+- **Anti-pattern:** Adding items to allowlist to avoid fixing drift
+
+**Remediation SLA:**
+- Documentation drift found in PR review: **Must fix before merge** (no exceptions)
+- Documentation drift found post-merge: **Fix within 1 business day**
+- Broken external links: **Fix within 1 week** (non-blocking)
+
+## 10. Monitoring & Observability (Phase 0.12)
+
+### Request ID Propagation
+
+**MANDATORY:** All HTTP requests must include a correlation ID for distributed tracing.
+
+**Header:** `x-request-id`
+**Format:** UUID v4 (e.g., `550e8400-e29b-41d4-a716-446655440000`)
+
+**Rules:**
+- Middleware reads incoming `x-request-id` or generates new UUID v4
+- Response MUST include `x-request-id` header (same value)
+- All structured logs SHOULD include `requestId` field
+- All audit events MUST include `requestId` field (required)
+
+**Implementation:** `apps/web/middleware.ts` (applies to all routes except static files)
 
 ### Application Logging
-- Structured logging (JSON)
-- Log levels: ERROR, WARN, INFO, DEBUG
-- Include correlation IDs
-- No PII in logs (unless encrypted)
+
+**MANDATORY:** Use structured logging helper for all server-side logs.
+
+**Format:** JSON Lines (one JSON object per line)
+
+**Required Fields:**
+- `ts` (string) - ISO 8601 timestamp in UTC
+- `level` (string) - Log level: info, warn, error, debug
+- `msg` (string) - Human-readable message (snake_case preferred)
+- `scope` (string) - Scope identifier (dot-separated, e.g., "api.health")
+
+**Optional Fields:**
+- `requestId` (string) - Request correlation ID (include when available)
+- `meta` (object) - Additional structured metadata
+- `error` (object) - Error details (name, message, stack)
+
+**Security Guardrails:**
+- ❌ NEVER log: passwords, tokens, API keys, credit cards, SSNs, complete session cookies
+- ✅ DO log: request IDs, user IDs (opaque), email addresses (audit only), timestamps, durations
+
+**Implementation:**
+```typescript
+import { logger } from '@/server/logger';
+
+logger.info({
+  msg: 'user_created',
+  scope: 'api.users',
+  requestId: request.headers.get('x-request-id') || undefined,
+  meta: { userId: 'user-123' },
+});
+```
+
+**Enforcement:**
+- Use `logger.info/warn/error/debug` instead of `console.log`
+- Code review checks for PII leakage in logs
+- No string interpolation in `msg` field (use `meta` for dynamic values)
 
 ### Metrics
+
+**Current Status:** Not yet implemented (planned for Phase 1+)
+
+**Planned:**
 - Track key performance indicators
 - Monitor error rates
 - Alert on anomalies
 - Dashboard for real-time visibility
 
 ### Tracing
-- Distributed tracing for requests
-- Performance profiling
+
+**Current Status:** Request ID propagation only (Phase 0.12)
+
+**Planned (Phase 1+):**
+- OpenTelemetry integration for distributed tracing
+- Performance profiling and span tracking
 - Database query monitoring
 
 ---

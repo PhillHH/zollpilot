@@ -8,7 +8,7 @@ ZollPilot helps organizations efficiently manage and navigate customs data with 
 
 ## Project Status
 
-**Phase:** 0.9.2 - Dependabot configuration and security scanning documentation
+**Phase:** 0.12 - Observability baseline (request IDs + structured logs + audit helper)
 **Next:** Phase 1 - Core features implementation
 
 ## Features (Planned)
@@ -139,6 +139,7 @@ See [docs/POLICIES.md](docs/POLICIES.md) and [SECURITY.md](SECURITY.md) for deta
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture and design
 - **[CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Contribution guidelines
 - **[POLICIES.md](docs/POLICIES.md)** - Development policies and standards
+- **[OBSERVABILITY.md](docs/OBSERVABILITY.md)** - Request IDs, structured logs, and audit trails
 - **[USER_MANUAL.md](docs/USER_MANUAL.md)** - End-user guide
 - **[ADMIN_MANUAL.md](docs/ADMIN_MANUAL.md)** - Administrator guide
 
