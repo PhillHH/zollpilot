@@ -46,8 +46,8 @@ cp .env.example .env
 # 5. Start the database
 pnpm db:up
 
-# 6. Run database migrations
-pnpm prisma:migrate
+# 6. Push database schema (Phase 1.2 Strategy)
+pnpm db:push
 
 # 7. Seed the database
 pnpm prisma:seed
@@ -160,7 +160,9 @@ After schema changes, regenerate the Prisma client:
 pnpm prisma:generate
 ```
 
-#### Run Migrations
+#### Run Migrations (Planned Phase 2+)
+
+*Currently using `db:push` for rapid prototyping.*
 
 Apply database migrations:
 

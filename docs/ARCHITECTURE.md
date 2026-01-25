@@ -214,8 +214,8 @@ ZollPilot uses **NextAuth.js (Auth.js) v5** for secure, standard-compliant authe
 
 **Key Components:**
 - **Provider:** Credentials (Email/Password)
-- **Session:** JWT-based with server-side database validation (hybrid approach).
-- **Persistence:** `@auth/prisma-adapter` stores Users, Accounts, and Sessions (for future OAuth).
+- **Session:** Database sessions (cookie-based) via `@auth/prisma-adapter`.
+- **Persistence:** `@auth/prisma-adapter` stores Users, Accounts, and Sessions.
 - **Hashing:** `bcrypt` (10 rounds) for secure password storage.
 
 **Flow:**

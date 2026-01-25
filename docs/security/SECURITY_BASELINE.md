@@ -40,9 +40,9 @@ Die Anwendung nutzt **NextAuth.js (Auth.js) v5** für die Authentifizierung.
 - **Provider:** Credentials (E-Mail/Passwort)
 - **Hashing:** `bcrypt` (Salted Rounds: 10)
 - **Session Strategy:**
-  - **JWT (JSON Web Token)** wird primär genutzt (technische Anforderung des Credentials Providers in NextAuth v5).
-  - **Database Validation:** Bei jedem Session-Zugriff wird der User gegen die Datenbank geprüft, um Revocation (Sperrung) zu ermöglichen.
-- **Adapter:** `@auth/prisma-adapter` ist integriert (vorbereitet für OAuth und Session-Persistenz).
+  - **Database Sessions:** Verwaltet über `@auth/prisma-adapter` (Cookie-basiert).
+  - **Kein JWT:** Volle Server-Side-Kontrolle und Revocation.
+- **Adapter:** `@auth/prisma-adapter` ist integriert.
 - **Tenancy:** Bei Registrierung wird automatisch ein "My Workspace" Tenant angelegt.
 
 ### Features
@@ -85,6 +85,10 @@ enum UserRole {
 - Keine API-Endpunkte nutzen Rollen
 
 ### Geplante Berechtigungsmatrix
+
+**Rollen-Mapping (Phase 1.2):**
+- **ADMIN** ≙ **Owner** (Voller Zugriff auf Tenant)
+- **USER** ≙ **Member** (Standard-Zugriff)
 
 | Aktion | ADMIN | SUPPORT_ADMIN | CONFIG_ADMIN | VIEWER | USER |
 |--------|-------|---------------|--------------|--------|------|
